@@ -1,6 +1,6 @@
 const { default: Axios } = require("axios");
 const axios = Axios.create({
-  baseURL: "http://localhost:8004/college-api"
+  baseURL: process.env.REACT_APP_BASE_URL
 });
 
 axios.interceptors.request.use(
