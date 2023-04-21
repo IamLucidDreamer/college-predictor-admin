@@ -9,6 +9,9 @@ import { innerTableActionBtnDesign } from "./components/styles/innerTableActions
 import { useFormik } from "formik";
 import * as Yup from "yup";
 
+const COLLEGE_TYPE = ["Government", "Private", "Others"];
+
+
 const Colleges = () => {
   const [show, setShow] = useState(false);
 
@@ -60,7 +63,7 @@ const Colleges = () => {
     axios
       .get("/college/get-all", {})
       .then((res) => {
-        toast.success("Business Users Ready for Download");
+        toast.success("Colleges Users Ready for Download");
         setActions({ downloadAllCollege: true });
         setValue({
           allCollege: res?.data?.data?.college,
@@ -243,15 +246,17 @@ const Colleges = () => {
               ) : null}
             </div>
             <div className="">
-              <input
-                type="text"
-                placeholder="college Tag"
-                className="border-2 border-purple-1 px-2 py-3 bg-purple-1 bg-opacity-5 rounded-lg w-full "
-                {...formik.getFieldProps("collegeTag")}
-              />
-              {formik.touched.collegeTag && formik.errors.collegeTag ? (
-                <div>{formik.errors.collegeTag}</div>
-              ) : null}
+              <select
+                className="border-2 border-purple-1 px-2 py-3 bg-purple-1 bg-opacity-5 rounded-lg w-full"
+                {...formik.getFieldProps("tag")}
+              >
+                <option disabled value="">
+                  Choose College Type
+                </option>
+                {COLLEGE_TYPE.map((val) => {
+                  return <option value={val}>{val}</option>;
+                })}
+              </select>
             </div>
             <div className="">
               <input

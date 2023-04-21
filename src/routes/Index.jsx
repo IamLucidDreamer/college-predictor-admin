@@ -11,6 +11,7 @@ import DashboardStats from "../features/DashboardStats";
 import Updates from "../features/Updates";
 import Blogs from "../features/Blogs";
 import Colleges from "../features/Colleges";
+import Subscriber from "../features/Subscriber";
 
 // import { Users } from "../users/Index";
 // import { Approvals } from "../approvals/Index";
@@ -27,29 +28,70 @@ const Index = () => {
   const navigate = useNavigate();
   const handleUnAuth = () => navigate("/login");
 
+  const routesData = [
+    {
+      route: "dashboard",
+      component: <DashboardStats />,
+      isAdmin: true,
+      isCounselor: false,
+      isCollegeAdmin: false,
+    },
+    {
+      route: "users",
+      component: <Users />,
+      isAdmin: true,
+      isCounselor: true,
+      isCollegeAdmin: false,
+    },
+    {
+      route: "college",
+      component: <Colleges />,
+      isAdmin: true,
+      isCounselor: true,
+      isCollegeAdmin: true,
+    },
+    {
+      route: "updates",
+      component: <Updates />,
+      isAdmin: true,
+      isCounselor: false,
+      isCollegeAdmin: false,
+    },
+    {
+      route: "blogs",
+      component: <Blogs />,
+      isAdmin: true,
+      isCounselor: false,
+      isCollegeAdmin: false,
+    },
+    {
+      route: "subscribers",
+      component: <Subscriber />,
+      isAdmin: true,
+      isCounselor: false,
+      isCollegeAdmin: false,
+    },
+  ];
+
   return (
     <Routes>
       <Route path="/" element={<Login />} />
 
       {/* Handling the Admin User Routes */}
-      {user.role === 3 && token && auth ? (
+      {user.role !== 1 && token && auth ? (
         <>
           <Route path="/admin" element={<Dashboard />}>
-            <Route path="dashboard" element={<DashboardStats />} />
-            <Route path="users" element={<Users />} />
-            <Route path="college" element={<Colleges />} />
-            <Route path="updates" element={<Updates />} />
-            <Route path="blogs" element={<Blogs />} />
-            {/*<Route path="approvals" element={<Approvals />} />
-            <Route path="pointsmanager" element={<PointsManager />} />
-            <Route
-              path="actualconsumptionmanager"
-              element={<ActualConsumptionManager />}
-            />
-            <Route path="staticsmanager" element={<StaticsManager />} />
-            <Route path="productmaster" element={<ProductMaster />} />
-            {/* <Route path="defaultedpoint" element={<DefaultedPoints/>}/> */}
-            {/* <Route path="assetmaster" element={<Assets />} /> */} */}
+            {routesData.map((val) => {
+              {
+                if (
+                  (user.role === 2 && val?.isCounselor) ||
+                  (user.role === 3 && val?.isAdmin) ||
+                  (user.role === 4 && val?.isCollegeAdmin)
+                ) {
+                  return <Route path={val.route} element={val.component} />;
+                }
+              }
+            })}
           </Route>
         </>
       ) : (

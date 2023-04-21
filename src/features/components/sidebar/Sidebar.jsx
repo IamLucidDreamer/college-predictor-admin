@@ -10,14 +10,75 @@ import {
   HistoryOutlined,
   FormOutlined,
   ApartmentOutlined,
+  MailOutlined,
 } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import Logo from "../../../assets/images/careerkick_logo.png";
 import "./styles.css";
+import { useSelector } from "react-redux";
 
 const { Sider } = Layout;
 
+const menuOptions = [
+  {
+    title: "Statistics",
+    optionName: "Dashboard",
+    icon: <DashboardOutlined style={{ fontSize: "18px" }} />,
+    route: "/admin/dashboard",
+    isAdmin: true,
+    isCounselor: false,
+    isCollegeAdmin: false,
+  },
+  {
+    title: "Users",
+    optionName: "Users",
+    icon: <UserOutlined style={{ fontSize: "18px" }} />,
+    route: "/admin/users",
+    isAdmin: true,
+    isCounselor: true,
+    isCollegeAdmin: false,
+  },
+  {
+    title: "Colleges",
+    optionName: "colleges",
+    icon: <BankOutlined style={{ fontSize: "18px" }} />,
+    route: "/admin/college",
+    isAdmin: true,
+    isCounselor: true,
+    isCollegeAdmin: false,
+  },
+  {
+    title: "Blogs",
+    optionName: "Blogs",
+    icon: <FundProjectionScreenOutlined style={{ fontSize: "18px" }} />,
+    route: "/admin/blogs",
+    isAdmin: true,
+    isCounselor: false,
+    isCollegeAdmin: false,
+  },
+  {
+    title: "Updates",
+    optionName: "Updates",
+    icon: <FormOutlined style={{ fontSize: "18px" }} />,
+    route: "/admin/updates",
+    isAdmin: true,
+    isCounselor: false,
+    isCollegeAdmin: false,
+  },
+  {
+    title: "Subscribers",
+    optionName: "Subscribers",
+    icon: <MailOutlined style={{ fontSize: "18px" }} />,
+    route: "/admin/subscribers",
+    isAdmin: true,
+    isCounselor: false,
+    isCollegeAdmin: false,
+  },
+];
+
 const Sidebar = ({ setTitle }) => {
+  const user = useSelector((state) => state.user);
+
   const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(true);
   return (
@@ -42,113 +103,28 @@ const Sidebar = ({ setTitle }) => {
         mode="inline"
         style={{ backgroundColor: "#fff", marginTop: "10px" }}
       >
-        <Menu.Item
-          key="1"
-          icon={<DashboardOutlined style={{ fontSize: "18px" }} />}
-          style={{ fontSize: "18px", display: "flex", color: "#0a2c3c" }}
-          onClick={() => {
-            navigate("/admin/dashboard");
-            setTitle("Statistics");
-          }}
-        >
-          Dashboard
-        </Menu.Item>
-        <Menu.Item
-          key="2"
-          icon={<UserOutlined style={{ fontSize: "18px" }} />}
-          style={{ fontSize: "18px", display: "flex", color: "#0a2c3c" }}
-          onClick={() => {
-            navigate("/admin/users");
-            setTitle("Users");
-          }}
-        >
-          Users
-        </Menu.Item>
-        <Menu.Item
-          key="3"
-          icon={<BankOutlined style={{ fontSize: "18px" }} />}
-          style={{ fontSize: "18px", display: "flex", color: "#0a2c3c" }}
-          onClick={() => {
-            navigate("/admin/college");
-            setTitle("Colleges");
-          }}
-        >
-          Colleges
-        </Menu.Item>
-        <Menu.Item
-          key="4"
-          icon={<FundProjectionScreenOutlined style={{ fontSize: "18px" }} />}
-          style={{ fontSize: "18px", display: "flex", color: "#0a2c3c" }}
-          onClick={() => {
-            navigate("/admin/blogs");
-            setTitle("Blogs");
-          }}
-        >
-          Blogs
-        </Menu.Item>
-        <Menu.Item
-          key="5"
-          icon={<FormOutlined style={{ fontSize: "18px" }} />}
-          style={{ fontSize: "18px", display: "flex", color: "#0a2c3c" }}
-          onClick={() => {
-            navigate("/admin/updates");
-            setTitle("Updates");
-          }}
-        >
-          Updates
-        </Menu.Item>
-        {/* <Menu.Item
-          key="6"
-          icon={<ApartmentOutlined style={{ fontSize: "18px" }} />}
-          style={{ fontSize: "18px", display: "flex", color: "#0a2c3c" }}
-          onClick={() => {
-            navigate("/admin/assetmaster");
-            setTitle("Asset Manager");
-          }}
-        >
-          Asset Manager
-        </Menu.Item>
-        <Menu.Item
-          key="7"
-          icon={<FileOutlined style={{ fontSize: "18px" }} />}
-          style={{ fontSize: "18px", display: "flex", color: "#0a2c3c" }}
-          onClick={() => {
-            navigate("/admin/staticsmanager");
-            setTitle("Statics Manager");
-          }}
-        >
-          Statics Manager
-        </Menu.Item>
-        <Menu.Item
-          key="8"
-          icon={<UnorderedListOutlined style={{ fontSize: "18px" }} />}
-          style={{ fontSize: "18px", display: "flex", color: "#0a2c3c" }}
-          onClick={() => {
-            navigate("/admin/productmaster");
-            setTitle("Product Manager");
-          }}
-        >
-          Product Manager
-        </Menu.Item>
-        <Menu.Item
-          key="9"
-          icon={<HistoryOutlined style={{ fontSize: "18px" }} />}
-          style={{ fontSize: "18px", display: "flex", color: "#0a2c3c" }}
-          onClick={() => {
-            navigate("/admin/history");
-            setTitle("History");
-          }}
-        >
-          History
-        </Menu.Item> */}
-        {/* <Menu.Item
-          key="10"
-          icon={<HistoryOutlined style={{ fontSize: "18px" }} />}
-          style={{ fontSize: "18px", display: "flex", color: "#0a2c3c" }}
-          onClick={() => navigate("/admin/defaultedpoint")}
-        >
-          Defaulted Points
-        </Menu.Item> */}
+        {menuOptions.map((val, index) => {
+          const key = 1
+          if (
+            (user.role === 2 && val?.isCounselor) ||
+            (user.role === 3 && val?.isAdmin) ||
+            (user.role === 4 && val?.isCollegeAdmin)
+          ) {
+            return (
+              <Menu.Item
+                key={index + 1}
+                icon={val?.icon}
+                style={{ fontSize: "18px", display: "flex", color: "#0a2c3c" }}
+                onClick={() => {
+                  navigate(val?.route);
+                  setTitle(val?.title);
+                }}
+              >
+                {val?.optionName}
+              </Menu.Item>
+            );
+          }
+        })}
       </Menu>
     </Sider>
   );

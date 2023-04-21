@@ -17,7 +17,7 @@ export const HeaderElement = ({ title }) => {
 
   const DropDownMenu = () => (
     <Menu>
-      <Menu.Item key="1">User Profile</Menu.Item>
+      {/* <Menu.Item key="1">User Profile</Menu.Item> */}
       <Menu.Item key="2" onClick={() => dispatch(logout())}>
         LogOut
       </Menu.Item>
@@ -78,7 +78,12 @@ export const HeaderElement = ({ title }) => {
         boxShadow: "0px 1px 8px #c1c1c1",
       }}
     >
-      <h1 className="text-purple-1 text-xl m-0">Admin Dashboard / {title}</h1>
+      <h1 className="text-purple-1 text-xl m-0">
+        {(user.role === 2 && "Counsellor") ||
+          (user.role === 3 && "Admin") ||
+          (user.role === 4 && "College Admin")}{" "}
+        Dashboard / {title}
+      </h1>
       <div className="flex items-center justify-center">
         <Dropdown overlay={DropDownMenu} className="cursor-pointer">
           <div className="flex items-center">

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Logo from "../../../assets/images/logo_white.png";
-import bgImage from "../../../assets/images/auth_bg_mobile.png"
+import bgImage from "../../../assets/images/auth_bg_mobile.png";
 import { Link, useNavigate } from "react-router-dom";
 import { login } from "../../../store/actions/user";
 import { useDispatch, useSelector } from "react-redux";
@@ -18,8 +18,14 @@ const Login = () => {
 
   useEffect(() => {
     const token = localStorage.getItem("jwt");
-    if (token && user.role === 3) {
+    if (token && auth && user.role === 2) {
+      navigate("/admin/users");
+    }
+    if (token && auth && user.role === 3) {
       navigate("/admin/dashboard");
+    }
+    if (token && auth && user.role === 4) {
+      navigate("/admin/college");
     }
   }, [user]);
 
@@ -45,7 +51,10 @@ const Login = () => {
   });
 
   return (
-    <div className="bg-no-repeat bg-center bg-cover" style={{backgroundImage : `url(${bgImage})`}}>
+    <div
+      className="bg-no-repeat bg-center bg-cover"
+      style={{ backgroundImage: `url(${bgImage})` }}
+    >
       <img src={Logo} className="w-60 mx-auto fixed top-2 left-2" alt="" />
       <div className="min-h-screen bg-gradient-to-tl from-primary to-transparent flex items-center justify-end">
         <div className="w-11/12 sm:w-9/12 md:w-2/3 lg:w-1/3 bg-white rounded-3xl shadow-xl px-6 py-8 mx-auto">

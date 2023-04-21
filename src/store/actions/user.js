@@ -21,9 +21,9 @@ export const login =
           password,
         })
         .then((res) => {
-          if (res?.data?.user?.role !== 3) {
+          if (res?.data?.user?.role === 1) {
             toast.warning(
-              "Web CRM is for Admin's only. Please use the mobile app Instead."
+              "Web CRM is for Admin's only. Please use the mobile app or the Main Web App Instead."
             );
           } else {
             toast.success(res?.data?.message);
@@ -32,6 +32,7 @@ export const login =
             if (window !== undefined) {
               localStorage.setItem("jwt", JSON.stringify(res?.data?.token));
             }
+            // window.location.replace("/admin")
           }
         })
         .catch((err) => toast.error(err?.response?.data?.error));
@@ -39,10 +40,11 @@ export const login =
 
 export const logout = () => {
   return (dispatch) => {
-    localStorage.removeItem("jwt");
+    localStorage.clear();
     dispatch(setUserDetails(null));
     dispatch(setAuth(false));
     axios.get("/signout");
     toast.success("User Logged out");
+    window.location.replace("/")
   };
 };
