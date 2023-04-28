@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import Logo from "../../../assets/images/logo_white.png";
-import bgImage from "../../../assets/images/auth_bg_mobile.png";
+import Logo from "../assets/images/logo_white.png";
+import bgImage from "../assets/images/auth_bg_mobile.png";
 import { Link, useNavigate } from "react-router-dom";
-import { login } from "../../../store/actions/user";
+import { login } from "../store/actions/user";
 import { useDispatch, useSelector } from "react-redux";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -56,8 +56,8 @@ const Login = () => {
       style={{ backgroundImage: `url(${bgImage})` }}
     >
       <img src={Logo} className="w-60 mx-auto fixed top-2 left-2" alt="" />
-      <div className="min-h-screen bg-gradient-to-tl from-primary to-transparent flex items-center justify-end">
-        <div className="w-11/12 sm:w-9/12 md:w-2/3 lg:w-1/3 bg-white rounded-3xl shadow-xl px-6 py-8 mx-auto">
+      <div className="min-h-screen bg-[#023020] flex items-center justify-end">
+        <div className="w-11/12 sm:w-9/12 md:w-2/3 lg:w-1/3 bg-white rounded-3xl shadow px-6 py-8 mx-auto shadow-white">
           <Spin spinning={loader}>
             <h1 className="text-3xl font-bold text-secondary pt-3 text-left">
               Welcome Back

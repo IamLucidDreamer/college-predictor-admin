@@ -8,12 +8,14 @@ import { EyeOutlined, CloseOutlined } from "@ant-design/icons";
 import { innerTableActionBtnDesign } from "./components/styles/innerTableActions";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import Select from "react-select";
 
 const COLLEGE_TYPE = ["Government", "Private", "Others"];
-
+const COLLEGE_TAG = []
 
 const Colleges = () => {
   const [show, setShow] = useState(false);
+  const [collegeNameData, setCollegeNameData] = useState([]);
 
   // Declaring the States Required for the Working of the Component
   const [actions, setActions] = useReducer(
@@ -43,6 +45,20 @@ const Colleges = () => {
   );
 
   const { college, allCollege, drawerValue } = value;
+
+  const getCollegeName = () => {
+    axios
+      .post("/neet-dropdown", { instituteName: [] })
+      .then((res) => {
+        const newObject = res?.data?.data;
+        newObject.instituteName = newObject.filter(
+          (item, index) => newObject.indexOf(item) === index
+        );
+        setCollegeNameData(newObject);
+      })
+      .catch((err) => console.log(err))
+      .finally(setActions({ loading: false }));
+  };
 
   // Functions Used for Different Data
   const requestsCaller = () => {
@@ -95,7 +111,10 @@ const Colleges = () => {
 
   const showAddNew = () => setShow(true);
 
-  useEffect(() => requestsCaller(), []);
+  useEffect(() => {
+    getCollegeName();
+    requestsCaller();
+  }, []);
 
   const columns = [
     {
@@ -205,6 +224,176 @@ const Colleges = () => {
     },
   });
 
+  const AddNewCollege = () => {
+    return (
+      <form
+        onSubmit={formik.handleSubmit}
+        className="my-6 max-w-screen-lg mx-auto"
+      >
+        <div className="flex items-center justify-between gap-4">
+          <h1 className="text-xl text-purple-1 m-0">Add New College</h1>
+          <button className="ml-10 mt-0 pt-0" onClick={() => setShow(false)}>
+            <CloseOutlined style={{ fontSize: "20px" }} />
+          </button>
+        </div>
+        <div className="flex flex-col gap-4 mt-4">
+          <div className="">
+            <Select
+              value={{
+                value: formik.values.collegeName,
+                label: formik.values.collegeName,
+              }}
+              placeholder={`Select College Name`}
+              options={collegeNameData?.map((value) => {
+                return {
+                  value: value?.instituteName,
+                  label: value?.instituteName,
+                };
+              })}
+              onChange={(e) => {
+                formik.setFieldValue("collegeName", e.value);
+              }}
+            />
+            {formik.touched.collegeName && formik.errors.collegeName ? (
+              <div>{formik.errors.collegeName}</div>
+            ) : null}
+          </div>
+          <div className="">
+            <select
+              className="border-2 border-purple-1 px-2 py-3 bg-purple-1 bg-opacity-5 rounded-lg w-full"
+              {...formik.getFieldProps("tag")}
+            >
+              <option disabled value="">
+                Choose College Type
+              </option>
+              {COLLEGE_TYPE.map((val) => {
+                return <option value={val}>{val}</option>;
+              })}
+            </select>
+          </div>
+          <div className="">
+            <input
+              type="text"
+              placeholder="College Type"
+              className="border-2 border-purple-1 px-2 py-3 bg-purple-1 bg-opacity-5 rounded-lg w-full "
+              {...formik.getFieldProps("collegeType")}
+            />
+            {formik.touched.collegeType && formik.errors.collegeType ? (
+              <div>{formik.errors.collegeType}</div>
+            ) : null}
+          </div>
+          <div className="">
+            <input
+              type="text"
+              placeholder="Contact Email"
+              className="border-2 border-purple-1 px-2 py-3 bg-purple-1 bg-opacity-5 rounded-lg w-full "
+              {...formik.getFieldProps("contactEmail")}
+            />
+            {formik.touched.contactEmail && formik.errors.contactEmail ? (
+              <div>{formik.errors.contactEmail}</div>
+            ) : null}
+          </div>
+          <div className="">
+            <input
+              type="text"
+              placeholder="Contact Number"
+              className="border-2 border-purple-1 px-2 py-3 bg-purple-1 bg-opacity-5 rounded-lg w-full "
+              {...formik.getFieldProps("contactNumber")}
+            />
+            {formik.touched.contactNumber && formik.errors.contactNumber ? (
+              <div>{formik.errors.contactNumber}</div>
+            ) : null}
+          </div>
+          <div className="">
+            <input
+              type="text"
+              placeholder="Establise Year"
+              className="border-2 border-purple-1 px-2 py-3 bg-purple-1 bg-opacity-5 rounded-lg w-full "
+              {...formik.getFieldProps("estYear")}
+            />
+            {formik.touched.estYear && formik.errors.estYear ? (
+              <div>{formik.errors.estYear}</div>
+            ) : null}
+          </div>
+          <div className="">
+            <input
+              type="text"
+              placeholder="City"
+              className="border-2 border-purple-1 px-2 py-3 bg-purple-1 bg-opacity-5 rounded-lg w-full "
+              {...formik.getFieldProps("city")}
+            />
+            {formik.touched.city && formik.errors.city ? (
+              <div>{formik.errors.city}</div>
+            ) : null}
+          </div>
+          <div className="">
+            <input
+              type="text"
+              placeholder="State"
+              className="border-2 border-purple-1 px-2 py-3 bg-purple-1 bg-opacity-5 rounded-lg w-full "
+              {...formik.getFieldProps("state")}
+            />
+            {formik.touched.state && formik.errors.state ? (
+              <div>{formik.errors.state}</div>
+            ) : null}
+          </div>
+          <div className="">
+            <input
+              type="text"
+              placeholder="Hotness Score"
+              className="border-2 border-purple-1 px-2 py-3 bg-purple-1 bg-opacity-5 rounded-lg w-full "
+              {...formik.getFieldProps("hotnessScore")}
+            />
+            {formik.touched.hostnessScore && formik.errors.hostnessScore ? (
+              <div>{formik.errors.hostnessScore}</div>
+            ) : null}
+          </div>
+          <div className="">
+            <input
+              type="text"
+              placeholder="Ranking"
+              className="border-2 border-purple-1 px-2 py-3 bg-purple-1 bg-opacity-5 rounded-lg w-full "
+              {...formik.getFieldProps("ranking")}
+            />
+            {formik.touched.ranking && formik.errors.ranking ? (
+              <div>{formik.errors.ranking}</div>
+            ) : null}
+          </div>
+          <div className="flex items-center justify-evenly gap-4">
+            <div className="">
+              <h1>College Icon</h1>
+              <input
+                type="file"
+                placeholder="Name of Packaging Type "
+                className="border-2 border-purple-1 px-2 py-3 bg-purple-1 bg-opacity-5 rounded-lg"
+                onChange={(e) =>
+                  formik.setFieldValue("collegeIcon", e.currentTarget.files[0])
+                }
+              />
+            </div>
+            <div className="">
+              <h1>Cover Image</h1>
+              <input
+                type="file"
+                placeholder="Name of Packaging Type "
+                className="border-2 border-purple-1 px-2 py-3 bg-purple-1 bg-opacity-5 rounded-lg"
+                onChange={(e) =>
+                  formik.setFieldValue("collegeCover", e.currentTarget.files[0])
+                }
+              />
+            </div>
+          </div>
+          <button
+            className="ml-10 text-xl bg-secondary text-white p-3 rounded-xl"
+            type="submit"
+          >
+            Submit
+          </button>
+        </div>
+      </form>
+    );
+  };
+
   return (
     <div className="">
       <ActionButtons
@@ -222,169 +411,7 @@ const Colleges = () => {
         showAddNewButton={true}
         addNewFunction={showAddNew}
       />
-      {show ? (
-        <form
-          onSubmit={formik.handleSubmit}
-          className="my-6 max-w-screen-lg mx-auto"
-        >
-          <div className="flex items-center justify-between gap-4">
-            <h1 className="text-xl text-purple-1 m-0">Add New College</h1>
-            <button className="ml-10 mt-0 pt-0" onClick={() => setShow(false)}>
-              <CloseOutlined style={{ fontSize: "20px" }} />
-            </button>
-          </div>
-          <div className="flex flex-col gap-4 mt-4">
-            <div className="">
-              <input
-                type="text"
-                placeholder="College Name"
-                className="border-2 border-purple-1 px-2 py-3 bg-purple-1 bg-opacity-5 rounded-lg w-full"
-                {...formik.getFieldProps("collegeName")}
-              />
-              {formik.touched.collegeName && formik.errors.collegeName ? (
-                <div>{formik.errors.collegeName}</div>
-              ) : null}
-            </div>
-            <div className="">
-              <select
-                className="border-2 border-purple-1 px-2 py-3 bg-purple-1 bg-opacity-5 rounded-lg w-full"
-                {...formik.getFieldProps("tag")}
-              >
-                <option disabled value="">
-                  Choose College Type
-                </option>
-                {COLLEGE_TYPE.map((val) => {
-                  return <option value={val}>{val}</option>;
-                })}
-              </select>
-            </div>
-            <div className="">
-              <input
-                type="text"
-                placeholder="College Type"
-                className="border-2 border-purple-1 px-2 py-3 bg-purple-1 bg-opacity-5 rounded-lg w-full "
-                {...formik.getFieldProps("collegeType")}
-              />
-              {formik.touched.collegeType && formik.errors.collegeType ? (
-                <div>{formik.errors.collegeType}</div>
-              ) : null}
-            </div>
-            <div className="">
-              <input
-                type="text"
-                placeholder="Contact Email"
-                className="border-2 border-purple-1 px-2 py-3 bg-purple-1 bg-opacity-5 rounded-lg w-full "
-                {...formik.getFieldProps("contactEmail")}
-              />
-              {formik.touched.contactEmail && formik.errors.contactEmail ? (
-                <div>{formik.errors.contactEmail}</div>
-              ) : null}
-            </div>
-            <div className="">
-              <input
-                type="text"
-                placeholder="Contact Number"
-                className="border-2 border-purple-1 px-2 py-3 bg-purple-1 bg-opacity-5 rounded-lg w-full "
-                {...formik.getFieldProps("contactNumber")}
-              />
-              {formik.touched.contactNumber && formik.errors.contactNumber ? (
-                <div>{formik.errors.contactNumber}</div>
-              ) : null}
-            </div>
-            <div className="">
-              <input
-                type="text"
-                placeholder="Establise Year"
-                className="border-2 border-purple-1 px-2 py-3 bg-purple-1 bg-opacity-5 rounded-lg w-full "
-                {...formik.getFieldProps("estYear")}
-              />
-              {formik.touched.estYear && formik.errors.estYear ? (
-                <div>{formik.errors.estYear}</div>
-              ) : null}
-            </div>
-            <div className="">
-              <input
-                type="text"
-                placeholder="City"
-                className="border-2 border-purple-1 px-2 py-3 bg-purple-1 bg-opacity-5 rounded-lg w-full "
-                {...formik.getFieldProps("city")}
-              />
-              {formik.touched.city && formik.errors.city ? (
-                <div>{formik.errors.city}</div>
-              ) : null}
-            </div>
-            <div className="">
-              <input
-                type="text"
-                placeholder="State"
-                className="border-2 border-purple-1 px-2 py-3 bg-purple-1 bg-opacity-5 rounded-lg w-full "
-                {...formik.getFieldProps("state")}
-              />
-              {formik.touched.state && formik.errors.state ? (
-                <div>{formik.errors.state}</div>
-              ) : null}
-            </div>
-            <div className="">
-              <input
-                type="text"
-                placeholder="Hotness Score"
-                className="border-2 border-purple-1 px-2 py-3 bg-purple-1 bg-opacity-5 rounded-lg w-full "
-                {...formik.getFieldProps("hotnessScore")}
-              />
-              {formik.touched.hostnessScore && formik.errors.hostnessScore ? (
-                <div>{formik.errors.hostnessScore}</div>
-              ) : null}
-            </div>
-            <div className="">
-              <input
-                type="text"
-                placeholder="Ranking"
-                className="border-2 border-purple-1 px-2 py-3 bg-purple-1 bg-opacity-5 rounded-lg w-full "
-                {...formik.getFieldProps("ranking")}
-              />
-              {formik.touched.ranking && formik.errors.ranking ? (
-                <div>{formik.errors.ranking}</div>
-              ) : null}
-            </div>
-            <div className="flex items-center justify-evenly gap-4">
-              <div className="">
-                <h1>College Icon</h1>
-                <input
-                  type="file"
-                  placeholder="Name of Packaging Type "
-                  className="border-2 border-purple-1 px-2 py-3 bg-purple-1 bg-opacity-5 rounded-lg"
-                  onChange={(e) =>
-                    formik.setFieldValue(
-                      "collegeIcon",
-                      e.currentTarget.files[0]
-                    )
-                  }
-                />
-              </div>
-              <div className="">
-                <h1>Cover Image</h1>
-                <input
-                  type="file"
-                  placeholder="Name of Packaging Type "
-                  className="border-2 border-purple-1 px-2 py-3 bg-purple-1 bg-opacity-5 rounded-lg"
-                  onChange={(e) =>
-                    formik.setFieldValue(
-                      "collegeCover",
-                      e.currentTarget.files[0]
-                    )
-                  }
-                />
-              </div>
-            </div>
-            <button
-              className="ml-10 text-xl bg-secondary text-white p-3 rounded-xl"
-              type="submit"
-            >
-              Submit
-            </button>
-          </div>
-        </form>
-      ) : null}
+      {show ? <AddNewCollege /> : null}
       <div className="border-2 mt-5">
         <DataTable usersData={college} columns={columns} loading={loading} />
       </div>

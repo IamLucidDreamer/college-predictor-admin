@@ -4,14 +4,15 @@ import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 
 // Importing Components
-import Login from "../features/auth/logIn/Index";
+import Login from "../features/Login";
 import { Dashboard } from "../features/dashboard/Index";
-import Users from "../features/EndUsers";
+import Users from "../features/Users";
 import DashboardStats from "../features/DashboardStats";
 import Updates from "../features/Updates";
 import Blogs from "../features/Blogs";
 import Colleges from "../features/Colleges";
 import Subscriber from "../features/Subscriber";
+import PredictorData from "../features/PredictorData";
 
 // import { Users } from "../users/Index";
 // import { Approvals } from "../approvals/Index";
@@ -60,6 +61,13 @@ const Index = () => {
     {
       route: "blogs",
       component: <Blogs />,
+      isAdmin: true,
+      isCounselor: false,
+      isCollegeAdmin: false,
+    },
+    {
+      route: "predictor-data",
+      component: <PredictorData />,
       isAdmin: true,
       isCounselor: false,
       isCollegeAdmin: false,

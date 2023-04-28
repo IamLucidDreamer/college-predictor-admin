@@ -7,7 +7,7 @@ import { EyeOutlined } from "@ant-design/icons";
 import { innerTableActionBtnDesign } from "./components/styles/innerTableActions";
 // import { DrawerComp } from "./components/DrawerEndUser";
 
-const EndUsers = () => {
+const NeetResults = () => {
   // Declaring the States Required for the Working of the Component
   const [actions, setActions] = useReducer(
     (state, diff) => ({ ...state, ...diff }),
@@ -16,8 +16,8 @@ const EndUsers = () => {
       loading: false,
       pagination: 15,
       trash: false,
-      loadingAllEndUser: false,
-      downloadAllEndUser: false,
+      loadingAllEndNeetResult: false,
+      downloadAllEndNeetResult: false,
     }
   );
 
@@ -26,16 +26,16 @@ const EndUsers = () => {
     loading,
     pagination,
     trash,
-    loadingAllEndUser,
-    downloadAllEndUser,
+    loadingAllEndNeetResult,
+    downloadAllEndNeetResult,
   } = actions;
 
   const [value, setValue] = useReducer(
     (state, diff) => ({ ...state, ...diff }),
-    { endUsers: [], allEndUser: [], drawerValue: {} }
+    { endNeetResults: [], allEndNeetResult: [], drawerValue: {} }
   );
 
-  const { endUser, allEndUser, drawerValue } = value;
+  const { endNeetResult, allEndNeetResult, drawerValue } = value;
 
   // Functions Used for Different Data
   const requestsCaller = () => {
@@ -44,26 +44,26 @@ const EndUsers = () => {
       .get("/user/get-all")
       .then((res) => {
         setValue({
-          endUser: res.data.data,
+          endNeetResult: res.data.data,
         });
       })
       .catch((err) => console.log(err))
       .finally(setActions({ loading: false }));
   };
 
-  const getAllEndUser = () => {
+  const getAllEndNeetResult = () => {
     setActions({ loadingAllProducts: true });
     axios
       .get("/user/get-all")
       .then((res) => {
-        toast.success("Users Ready for Download");
-        setActions({ downloadAllEndUser: true });
+        toast.success("NeetResults Ready for Download");
+        setActions({ downloadAllEndNeetResult: true });
         setValue({
-          allEndUser: res.data.data,
+          allEndNeetResult: res.data.data,
         });
       })
       .catch((err) => console.log(err))
-      .finally(setActions({ loadingALlEndUser: true }));
+      .finally(setActions({ loadingALlEndNeetResult: true }));
   };
 
   useEffect(() => requestsCaller(), []);
@@ -86,6 +86,11 @@ const EndUsers = () => {
       key: "email",
       title: "Email",
       render: (data) => data.email,
+    },
+    {
+      key: "state",
+      title: "State",
+      render: (data) => data.state,
     },
     {
       key: "phoneNumber",
@@ -117,20 +122,20 @@ const EndUsers = () => {
   return (
     <div className="">
       <ActionButtons
-        pageTitle={"Users"}
+        pageTitle={"NeetResults"}
         showReFreshButton={true}
         refreshFunction={requestsCaller}
         showExportDataButton={true}
-        exportDataFunction={getAllEndUser}
-        totalItems={allEndUser}
-        csvName={"End Users"}
-        loadingItems={loadingAllEndUser}
-        downloadItems={downloadAllEndUser}
+        exportDataFunction={getAllEndNeetResult}
+        totalItems={allEndNeetResult}
+        csvName={"End NeetResults"}
+        loadingItems={loadingAllEndNeetResult}
+        downloadItems={downloadAllEndNeetResult}
         showAddNewButton={false}
         addNewFunction={""}
       />
       <div className="border-2 mt-5">
-        <DataTable usersData={endUser} columns={columns} loading={loading} />
+        <DataTable usersData={endNeetResult} columns={columns} loading={loading} />
       </div>
       <div>
         {/* <DrawerComp
@@ -144,4 +149,4 @@ const EndUsers = () => {
   );
 };
 
-export default EndUsers;
+export default NeetResults;

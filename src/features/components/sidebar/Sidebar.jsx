@@ -66,6 +66,15 @@ const menuOptions = [
     isCollegeAdmin: false,
   },
   {
+    title: "Predictor Data",
+    optionName: "Predictor Data",
+    icon: <FileOutlined style={{ fontSize: "18px" }} />,
+    route: "/admin/predictor-data",
+    isAdmin: true,
+    isCounselor: false,
+    isCollegeAdmin: false,
+  },
+  {
     title: "Subscribers",
     optionName: "Subscribers",
     icon: <MailOutlined style={{ fontSize: "18px" }} />,
