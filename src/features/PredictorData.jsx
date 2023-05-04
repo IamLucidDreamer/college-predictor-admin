@@ -8,6 +8,8 @@ import { innerTableActionBtnDesign } from "./components/styles/innerTableActions
 import { DrawerComp } from "./components/Drawers/UserFollowUp";
 import { useFormik } from "formik";
 
+const EXAM_TYPE = ["All India"];
+
 const PredictorData = () => {
   const [show, setShow] = useState(false);
 
@@ -51,38 +53,38 @@ const PredictorData = () => {
         });
       })
       .catch((err) => console.log(err))
-      .finally(setActions({ loading: false }));
+      .finally(() => setActions({ loading: false }));
   };
 
   const getAllNeetData = () => {
-    setActions({ loadingAllProducts: true });
+    setActions({ loadingAllNeetData: true });
     axios
-      .get("/neet/get-all")
+      .get("/neet/get-all?limit=100000")
       .then((res) => {
-        toast.success("Users Ready for Download");
+        toast.success("Predictor Data Ready for Download");
         setActions({ downloadAllNeetData: true });
         setValue({
-          allNeetData: res.data.data,
+          allNeetData: res.data.data?.neetData,
         });
       })
       .catch((err) => console.log(err))
-      .finally(setActions({ loadingAllNeetData: true }));
+      .finally(() => setActions({ loadingAllNeetData: false }));
   };
 
   const handleNewData = (value) => {
-    console.log(value);
+    setActions({ loading: true });
     const formData = new FormData();
     formData.append("file", value.file);
-    console.log(formData, "hiD");
+    formData.append("examType", value.examType);
     axios
       .post("/neet/bulk-upload", formData)
       .then((res) => {
-        toast.success("New Update Added Successfully.");
-        requestsCaller();
+        toast.success("New Data Added Successfully.");
         setShow(false);
+        requestsCaller();
       })
       .catch((err) => console.log(err))
-      .finally(setActions({ loadingAllBusiness: true }));
+      .finally(() => setActions({ loading: false }));
   };
 
   useEffect(() => requestsCaller(), []);
@@ -93,6 +95,11 @@ const PredictorData = () => {
 
   // Table Column
   const columns = [
+    {
+      key: "examType",
+      title: "Exam Type",
+      render: (data) => data?.examType,
+    },
     {
       key: "course",
       title: "Course",
@@ -131,7 +138,7 @@ const PredictorData = () => {
     {
       key: "year",
       title: "Year",
-      render: (data) => (data?.examCategory ? data?.examCategory : "--"),
+      render: (data) => (data?.year ? data?.year : "--"),
     },
     {
       key: "openingRank",
@@ -152,7 +159,7 @@ const PredictorData = () => {
 
   const ColumnActions = (props) => {
     return (
-      <div className="flex justify-around">
+      <div className="flex justify-around opacity-25">
         <EyeOutlined
           title="View"
           style={innerTableActionBtnDesign}
@@ -166,7 +173,7 @@ const PredictorData = () => {
   };
 
   const formik = useFormik({
-    initialValues: {},
+    initialValues: { examType: "" },
     onSubmit: (values) => {
       handleNewData(values);
     },
@@ -199,11 +206,24 @@ const PredictorData = () => {
           </div>
           <div className="flex flex-col gap-4 mt-4">
             <div className="">
-              <h1>New Data</h1>
+              <div className="">
+                <select
+                  className="border-2 border-purple-1 px-2 py-3 bg-purple-1 bg-opacity-5 rounded-lg w-full"
+                  {...formik.getFieldProps("examType")}
+                >
+                  <option disabled value="">
+                    Choose Exam Type
+                  </option>
+                  {EXAM_TYPE.map((val) => {
+                    return <option value={val}>{val}</option>;
+                  })}
+                </select>
+              </div>
+              <h1 className="my-2 font-semibold">New Data</h1>
               <input
                 type="file"
                 placeholder="Name of Packaging Type "
-                className="border-2 border-purple-1 px-2 py-3 bg-purple-1 bg-opacity-5 rounded-lg"
+                className="border-2 border-purple-1 px-2 py-3 bg-purple-1 bg-opacity-5 rounded-lg my-2"
                 onChange={(e) => {
                   e.preventDefault();
                   console.log(e.currentTarget.files[0]);
@@ -218,7 +238,7 @@ const PredictorData = () => {
               e.preventDefault();
               formik.handleSubmit();
             }}
-            className="ml-10 text-xl bg-secondary text-white p-3 rounded-xl"
+            className="text-xl bg-secondary text-white p-3 rounded-xl w-full"
           >
             Submit
           </button>

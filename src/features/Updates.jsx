@@ -52,7 +52,7 @@ const Updates = () => {
         });
       })
       .catch((err) => console.log(err))
-      .finally(setActions({ loading: false }));
+      .finally(() => setActions({ loading: false }));
   };
 
   const getAllUpdates = () => {
@@ -60,7 +60,7 @@ const Updates = () => {
     axios
       .get("/updates/get-all", {})
       .then((res) => {
-        toast.success("Business Users Ready for Download");
+        toast.success("Updates Data Ready for Download");
         setActions({ downloadAllUpdates: true });
         setValue({
           allUpdates: res?.data?.data?.updates,
@@ -71,14 +71,13 @@ const Updates = () => {
   };
 
   const handleNewUpdates = (value) => {
-    console.log(value);
+    setActions({ loading: true });
     const formData = new FormData();
     formData.append("imageMain", value.imageMain);
     formData.append("document", value.document);
     delete value.iamgeMain;
     delete value.document;
     formData.append("data", JSON.stringify(value));
-    console.log(formData, "hiD");
     axios
       .post("/updates/create", formData)
       .then((res) => {
@@ -87,7 +86,7 @@ const Updates = () => {
         setShow(false);
       })
       .catch((err) => console.log(err))
-      .finally(setActions({ loadingAllBusiness: true }));
+      .finally(() => setActions({ loading: false }));
   };
 
   const deletePackaging = () => {};
@@ -129,16 +128,16 @@ const Updates = () => {
           </a>
         ) : null,
     },
-    // {
-    //   key: "actions",
-    //   title: "Actions",
-    //   render: (record) => <ColumnActions record={record} />,
-    // },
+    {
+      key: "actions",
+      title: "Actions",
+      render: (record) => <ColumnActions record={record} />,
+    },
   ];
 
   const ColumnActions = (props) => {
     return (
-      <div className="flex justify-around">
+      <div className="flex justify-around opacity-25">
         <EyeOutlined
           title="View"
           style={innerTableActionBtnDesign}
@@ -241,7 +240,7 @@ const Updates = () => {
               </div>
             </div>
             <button
-              className="ml-10 text-xl bg-secondary text-white p-3 rounded-xl"
+              className="text-xl bg-secondary text-white p-3 rounded-xl"
               type="submit"
             >
               Submit

@@ -75,8 +75,8 @@ export const DrawerComp = (props) => {
       render: (data) => data.description,
     },
     {
-      key: "counsouler",
-      title: "Counsouler",
+      key: "counsellor",
+      title: "Counsellor",
       render: (data) => data?.reviewerId?.name,
     },
   ];

@@ -52,7 +52,7 @@ const Blogs = () => {
         });
       })
       .catch((err) => console.log(err))
-      .finally(setActions({ loading: false }));
+      .finally(() => setActions({ loading: false }));
   };
 
   const getAllBlogs = () => {
@@ -60,34 +60,33 @@ const Blogs = () => {
     axios
       .get("/blogs/get-all", {})
       .then((res) => {
-        toast.success("Business Users Ready for Download");
+        toast.success("Blogs Data Ready for Download");
         setActions({ downloadAllBlogs: true });
         setValue({
           allBlogs: res?.data?.data?.blogs,
         });
       })
       .catch((err) => console.log(err))
-      .finally(setActions({ loadingAllBusiness: true }));
+      .finally(() => setActions({ loadingAllBusiness: false }));
   };
 
   const handleNewBlogs = (value) => {
-    console.log(value);
+    setActions({ loading: true });
     const formData = new FormData();
     formData.append("imageMain", value.imageMain);
     formData.append("imageSecondary", value.imageSecondary);
     delete value.imageMain;
     delete value.imageSecondary;
     formData.append("data", JSON.stringify(value));
-    console.log(formData, "hiD");
     axios
       .post("/blog/create", formData)
       .then((res) => {
-        toast.success("New Update Added Successfully.");
+        toast.success("New Blog Added Successfully.");
         requestsCaller();
         setShow(false);
       })
       .catch((err) => console.log(err))
-      .finally(setActions({ loadingAllBusiness: true }));
+      .finally(() => setActions({ loading: false }));
   };
 
   const deletePackaging = () => {};
@@ -106,8 +105,10 @@ const Blogs = () => {
     {
       key: "description",
       title: "Description",
-      width: '60%',
-      render: (data) => <p className="whitespace-pre-line">{data.description}</p>,
+      width: "60%",
+      render: (data) => (
+        <p className="whitespace-pre-line">{data.description}</p>
+      ),
     },
     {
       key: "imageMain",
@@ -123,16 +124,16 @@ const Blogs = () => {
         <img src={data?.imageSecondary} className="h-36 max-w-56 mx-auto" />
       ),
     },
-    // {
-    //   key: "actions",
-    //   title: "Actions",
-    //   render: (record) => <ColumnActions record={record} />,
-    // },
+    {
+      key: "actions",
+      title: "Actions",
+      render: (record) => <ColumnActions record={record} />,
+    },
   ];
 
   const ColumnActions = (props) => {
     return (
-      <div className="flex justify-around">
+      <div className="flex justify-around opacity-25">
         <EyeOutlined
           title="View"
           style={innerTableActionBtnDesign}
@@ -238,7 +239,7 @@ const Blogs = () => {
               </div>
             </div>
             <button
-              className="ml-10 text-xl bg-secondary text-white p-3 rounded-xl"
+              className="text-xl bg-secondary text-white p-3 rounded-xl"
               type="submit"
             >
               Submit

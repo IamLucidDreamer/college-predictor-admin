@@ -1,13 +1,19 @@
-import React, { useEffect, useReducer } from "react";
+import React, { useEffect, useReducer, useState } from "react";
 import axios from "../appConfig/httpHelper";
 import ActionButtons from "./components/actionsButtons/Index";
 import { DataTable } from "./components/table/Index";
 import { toast } from "react-toastify";
-import { EyeOutlined } from "@ant-design/icons";
+import { EyeOutlined, PhoneOutlined } from "@ant-design/icons";
 import { innerTableActionBtnDesign } from "./components/styles/innerTableActions";
 import { DrawerComp } from "./components/Drawers/UserFollowUp";
+import { Button } from "antd";
+import { useSelector } from "react-redux";
 
 const EndUsers = () => {
+  const user = useSelector((state) => state?.user);
+
+  const [showGetAll, setShowGetAll] = useState(1);
+
   // Declaring the States Required for the Working of the Component
   const [actions, setActions] = useReducer(
     (state, diff) => ({ ...state, ...diff }),
@@ -41,14 +47,14 @@ const EndUsers = () => {
   const requestsCaller = () => {
     setActions({ loading: true });
     axios
-      .get("/user/get-all")
+      .get(`/user/get-all?getAll=${showGetAll}`)
       .then((res) => {
         setValue({
           endUser: res.data.data,
         });
       })
       .catch((err) => console.log(err))
-      .finally(setActions({ loading: false }));
+      .finally(() => setActions({ loading: false }));
   };
 
   const getAllEndUser = () => {
@@ -66,7 +72,7 @@ const EndUsers = () => {
       .finally(setActions({ loadingALlEndUser: true }));
   };
 
-  useEffect(() => requestsCaller(), []);
+  useEffect(() => requestsCaller(), [showGetAll]);
 
   const onCloseDrawer = () => setActions({ drawer: false });
 
@@ -88,13 +94,38 @@ const EndUsers = () => {
       render: (data) => data.email,
     },
     {
+      key: "city",
+      title: "City",
+      render: (data) => data.city,
+    },
+    {
       key: "state",
       title: "State",
       render: (data) => data.state,
     },
     {
+      key: "tenthMarks",
+      title: "10th Marks",
+      render: (data) => data.tenthMarks,
+    },
+    {
+      key: "twelthMarks",
+      title: "12th Marks",
+      render: (data) => data.twelthMarks,
+    },
+    {
+      key: "address",
+      title: "Address",
+      render: (data) => data.address,
+    },
+    {
+      key: "dateOfBirth",
+      title: "(DOB)",
+      render: (data) => data.dateOfBirth,
+    },
+    {
       key: "phoneNumber",
-      title: "Phone Number",
+      title: "Phone",
       render: (data) => data.phoneNumber,
     },
     {
@@ -104,9 +135,32 @@ const EndUsers = () => {
     },
   ];
 
+  const handleFollowUp = (data) => {
+    setActions({ loading: true });
+    axios
+      .post(`/user/follow-up/create/${data?._id}`)
+      .then((res) => {
+        requestsCaller();
+      })
+      .catch((err) => {
+        console.log(err);
+        toast.warning(err?.response?.data?.error);
+      })
+      .finally(() => setActions({ loading: false }));
+  };
+
   const ColumnActions = (props) => {
     return (
       <div className="flex justify-around">
+        {!props?.record?.reviewerId && showGetAll === 1 && user?.role === 2 && (
+          <PhoneOutlined
+            style={innerTableActionBtnDesign}
+            onClick={() => {
+              console.log(props?.record);
+              handleFollowUp(props?.record);
+            }}
+          />
+        )}
         <EyeOutlined
           title="View"
           style={innerTableActionBtnDesign}
@@ -134,6 +188,16 @@ const EndUsers = () => {
         showAddNewButton={false}
         addNewFunction={""}
       />
+      {user?.role === 2 && (
+        <div className="flex gap-4 mt-2">
+          <Button type="primary" onClick={() => setShowGetAll(1)}>
+            Show All
+          </Button>
+          <Button type="primary" onClick={() => setShowGetAll(2)}>
+            Show Mine
+          </Button>
+        </div>
+      )}
       <div className="border-2 mt-5">
         <DataTable usersData={endUser} columns={columns} loading={loading} />
       </div>

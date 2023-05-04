@@ -52,7 +52,7 @@ const Subscriber = () => {
         });
       })
       .catch((err) => console.log(err))
-      .finally(setActions({ loading: false }));
+      .finally(() => setActions({ loading: false }));
   };
 
   const getAllSubscriber = () => {
@@ -67,7 +67,7 @@ const Subscriber = () => {
         });
       })
       .catch((err) => console.log(err))
-      .finally(setActions({ loadingAllBusiness: true }));
+      .finally(() => setActions({ loadingAllBusiness: true }));
   };
 
   useEffect(() => requestsCaller(), []);

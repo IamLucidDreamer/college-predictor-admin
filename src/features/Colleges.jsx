@@ -11,7 +11,7 @@ import * as Yup from "yup";
 import Select from "react-select";
 
 const COLLEGE_TYPE = ["Government", "Private", "Others"];
-const COLLEGE_TAG = []
+const COLLEGE_TAG = [];
 
 const Colleges = () => {
   const [show, setShow] = useState(false);
@@ -71,7 +71,7 @@ const Colleges = () => {
         });
       })
       .catch((err) => console.log(err))
-      .finally(setActions({ loading: false }));
+      .finally(() => setActions({ loading: false }));
   };
 
   const getAllCollege = () => {
@@ -86,18 +86,17 @@ const Colleges = () => {
         });
       })
       .catch((err) => console.log(err))
-      .finally(setActions({ loadingAllBusiness: true }));
+      .finally(() => setActions({ loadingAllBusiness: false }));
   };
 
   const handleNewCollege = (value) => {
-    console.log(value);
+    setActions({ loading: true });
     const formData = new FormData();
     formData.append("collegeIcon", value.collegeIcon);
     formData.append("collegeCover", value.collegeCover);
     delete value.collegeIcon;
     delete value.collegeCover;
     formData.append("data", JSON.stringify(value));
-    console.log(formData, "hiD");
     axios
       .post("/college/create", formData)
       .then((res) => {
@@ -106,7 +105,7 @@ const Colleges = () => {
         setShow(false);
       })
       .catch((err) => console.log(err))
-      .finally(setActions({ loadingAllBusiness: true }));
+      .finally(() => setActions({ loading: false }));
   };
 
   const showAddNew = () => setShow(true);
@@ -203,6 +202,7 @@ const Colleges = () => {
 
   const formik = useFormik({
     initialValues: {
+      displayName: "",
       collegeName: "",
       collegeType: "",
       collegeTag: "",
@@ -256,6 +256,17 @@ const Colleges = () => {
             />
             {formik.touched.collegeName && formik.errors.collegeName ? (
               <div>{formik.errors.collegeName}</div>
+            ) : null}
+          </div>
+          <div className="">
+            <input
+              type="text"
+              placeholder="College Display Name"
+              className="border-2 border-purple-1 px-2 py-3 bg-purple-1 bg-opacity-5 rounded-lg w-full "
+              {...formik.getFieldProps("displayName")}
+            />
+            {formik.touched.displayName && formik.errors.displayName ? (
+              <div>{formik.errors.displayName}</div>
             ) : null}
           </div>
           <div className="">
