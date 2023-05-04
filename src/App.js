@@ -13,7 +13,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 // Importing Components
-import Routes  from "./routes/Index"; 
+import Routes  from "./routes/Index";  
 
 function App() {
   return (
