@@ -11,11 +11,13 @@ import * as Yup from "yup";
 import Select from "react-select";
 
 const COLLEGE_TYPE = ["Government", "Private", "Others"];
-const COLLEGE_TAG = [];
+const COLLEGE_TAG = ["Activities","Majors","Programs","Selectivity","Setting"];
+const COLLEGE_COURSES = ["BE/B.Tech","B.Arch","BCA","B.Sc","BPharma"];
 
 const Colleges = () => {
   const [show, setShow] = useState(false);
   const [collegeNameData, setCollegeNameData] = useState([]);
+  const [campusPhotos, setCampusPhotos] = useState([]);
 
   // Declaring the States Required for the Working of the Component
   const [actions, setActions] = useReducer(
@@ -94,6 +96,9 @@ const Colleges = () => {
     const formData = new FormData();
     formData.append("collegeIcon", value.collegeIcon);
     formData.append("collegeCover", value.collegeCover);
+    campusPhotos.map((item) => {
+      formData.append("campusPhotos", item);
+    })
     delete value.collegeIcon;
     delete value.collegeCover;
     formData.append("data", JSON.stringify(value));
@@ -206,14 +211,19 @@ const Colleges = () => {
       collegeName: "",
       collegeType: "",
       collegeTag: "",
+      coursesOffered: "",
       estYear: "",
       city: "",
       state: "",
+      address: "",
       website: "",
       contactNumber: "",
       contactEmail: "",
       ranking: "",
       hostnessScore: "",
+      cutOff: "",
+      tutionFees: "",
+      hostelFees: "",
     },
     validationSchema: Yup.object({
       // title: Yup.string().required("Required"),
@@ -272,26 +282,43 @@ const Colleges = () => {
           <div className="">
             <select
               className="border-2 border-purple-1 px-2 py-3 bg-purple-1 bg-opacity-5 rounded-lg w-full"
-              {...formik.getFieldProps("tag")}
+              {...formik.getFieldProps("collegeType")}
             >
               <option disabled value="">
                 Choose College Type
               </option>
               {COLLEGE_TYPE.map((val) => {
-                return <option value={val}>{val}</option>;
+                return <option key={val} value={val}>{val}</option>;
               })}
             </select>
           </div>
           <div className="">
-            <input
-              type="text"
-              placeholder="College Type"
-              className="border-2 border-purple-1 px-2 py-3 bg-purple-1 bg-opacity-5 rounded-lg w-full "
-              {...formik.getFieldProps("collegeType")}
-            />
-            {formik.touched.collegeType && formik.errors.collegeType ? (
-              <div>{formik.errors.collegeType}</div>
-            ) : null}
+            <select
+              multiple
+              className="border-2 border-purple-1 px-2 py-3 bg-purple-1 bg-opacity-5 rounded-lg w-full"
+              {...formik.getFieldProps("collegeTag")}
+            >
+              <option disabled value="">
+                Choose College Tag
+              </option>
+              {COLLEGE_TAG.map((val) => {
+                return <option key={val} value={val}>{val}</option>;
+              })}
+            </select>
+          </div>
+          <div className="">
+            <select
+              multiple
+              className="border-2 border-purple-1 px-2 py-3 bg-purple-1 bg-opacity-5 rounded-lg w-full"
+              {...formik.getFieldProps("coursesOffered")}
+            >
+              <option disabled value="">
+                Courses Offered
+              </option>
+              {COLLEGE_COURSES.map((val) => {
+                return <option key={val} value={val}>{val}</option>;
+              })}
+            </select>
           </div>
           <div className="">
             <input
@@ -313,6 +340,17 @@ const Colleges = () => {
             />
             {formik.touched.contactNumber && formik.errors.contactNumber ? (
               <div>{formik.errors.contactNumber}</div>
+            ) : null}
+          </div>
+          <div className="">
+            <input
+              type="text"
+              placeholder="Website"
+              className="border-2 border-purple-1 px-2 py-3 bg-purple-1 bg-opacity-5 rounded-lg w-full "
+              {...formik.getFieldProps("website")}
+            />
+            {formik.touched.website && formik.errors.website ? (
+              <div>{formik.errors.website}</div>
             ) : null}
           </div>
           <div className="">
@@ -351,6 +389,17 @@ const Colleges = () => {
           <div className="">
             <input
               type="text"
+              placeholder="Address"
+              className="border-2 border-purple-1 px-2 py-3 bg-purple-1 bg-opacity-5 rounded-lg w-full "
+              {...formik.getFieldProps("address")}
+            />
+            {formik.touched.address && formik.errors.address ? (
+              <div>{formik.errors.address}</div>
+            ) : null}
+          </div>
+          <div className="">
+            <input
+              type="text"
               placeholder="Hotness Score"
               className="border-2 border-purple-1 px-2 py-3 bg-purple-1 bg-opacity-5 rounded-lg w-full "
               {...formik.getFieldProps("hotnessScore")}
@@ -368,6 +417,39 @@ const Colleges = () => {
             />
             {formik.touched.ranking && formik.errors.ranking ? (
               <div>{formik.errors.ranking}</div>
+            ) : null}
+          </div>
+          <div className="">
+            <input
+              type="text"
+              placeholder="Cut Off"
+              className="border-2 border-purple-1 px-2 py-3 bg-purple-1 bg-opacity-5 rounded-lg w-full "
+              {...formik.getFieldProps("cutOff")}
+            />
+            {formik.touched.cutOff && formik.errors.cutOff ? (
+              <div>{formik.errors.cutOff}</div>
+            ) : null}
+          </div>
+          <div className="">
+            <input
+              type="text"
+              placeholder="Tution Fees"
+              className="border-2 border-purple-1 px-2 py-3 bg-purple-1 bg-opacity-5 rounded-lg w-full "
+              {...formik.getFieldProps("tutionFees")}
+            />
+            {formik.touched.tutionFees && formik.errors.tutionFees ? (
+              <div>{formik.errors.tutionFees}</div>
+            ) : null}
+          </div>
+          <div className="">
+            <input
+              type="text"
+              placeholder="Hostel Fees"
+              className="border-2 border-purple-1 px-2 py-3 bg-purple-1 bg-opacity-5 rounded-lg w-full "
+              {...formik.getFieldProps("hostelFees")}
+            />
+            {formik.touched.hostelFees && formik.errors.hostelFees ? (
+              <div>{formik.errors.hostelFees}</div>
             ) : null}
           </div>
           <div className="flex items-center justify-evenly gap-4">
@@ -392,6 +474,24 @@ const Colleges = () => {
                   formik.setFieldValue("collegeCover", e.currentTarget.files[0])
                 }
               />
+            </div>
+            <div className="">
+              <h1>Campus Photos</h1>
+              <input
+                type="file"
+                multiple
+                placeholder="Name of Packaging Type "
+                className="border-2 border-purple-1 px-2 py-3 bg-purple-1 bg-opacity-5 rounded-lg"
+                onChange={(e) =>
+                  // formik.setFieldValue("campusPhotos", e.currentTarget.files[0])
+                  setCampusPhotos([...campusPhotos, e.target.files[0]])
+                }
+              />
+              <div className="mt-2 flex gap-3">
+                {campusPhotos.map((item) => (
+                  <img key={item.name} src={URL.createObjectURL(item)} alt={item.name}  style={{ width: 50, height: 50 }} />
+                ))}
+              </div>
             </div>
           </div>
           <button
