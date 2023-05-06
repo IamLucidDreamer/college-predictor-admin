@@ -35,8 +35,6 @@ const COLLEGE_COURSES = [
 const Colleges = () => {
   const [show, setShow] = useState(false);
   const [collegeNameData, setCollegeNameData] = useState([]);
-  const [campusPhotos, setCampusPhotos] = useState([]);
-  const [stateCode, setStateCode] = useState();
 
   // Declaring the States Required for the Working of the Component
   const [actions, setActions] = useReducer(
@@ -115,8 +113,8 @@ const Colleges = () => {
     const formData = new FormData();
     formData.append("collegeIcon", value.collegeIcon);
     formData.append("collegeCover", value.collegeCover);
-    campusPhotos.map((item) => {
-      formData.append("campusPhotos", item);
+    value.campusPhotos.map((item, index) => {
+      formData.append(`campusPhotos${index}`, item);
     });
     delete value.collegeIcon;
     delete value.collegeCover;
@@ -230,6 +228,8 @@ const Colleges = () => {
   };
 
   const AddNewCollege = () => {
+    const [stateCode, setStateCode] = useState();
+
     const formik = useFormik({
       initialValues: {
         displayName: "",
@@ -249,6 +249,7 @@ const Colleges = () => {
         cutOff: "",
         tutionFees: "",
         hostelFees: "",
+        campusPhotos: [],
       },
       validationSchema: Yup.object({
         // title: Yup.string().required("Required"),
@@ -258,14 +259,6 @@ const Colleges = () => {
         handleNewCollege(values);
       },
     });
-
-    {
-      State.getStatesOfCountry("IN").find((item) => {
-        if (item.name === formik.values.state) {
-          setStateCode(item.isoCode);
-        }
-      });
-    }
 
     return (
       <form
@@ -410,6 +403,14 @@ const Colleges = () => {
               placeholder="State Name"
               className="border-2 border-purple-1 px-2 py-3 bg-purple-1 bg-opacity-5 rounded-lg w-full"
               {...formik.getFieldProps("state")}
+              onChange={(e) => {
+                formik.setFieldValue("state", e.target.value);
+                setStateCode(
+                  State.getStatesOfCountry("IN").find((val) => {
+                    if (val.name === e.target.value) return val;
+                  })
+                );
+              }}
             >
               <option value="" disabled>
                 Select State
@@ -428,7 +429,7 @@ const Colleges = () => {
               <option value="" disabled>
                 Select City
               </option>
-              {City.getCitiesOfState("IN", stateCode).map((item) => (
+              {City.getCitiesOfState("IN", stateCode?.isoCode).map((item) => (
                 <option value={item.name}>{item.name}</option>
               ))}
             </select>
@@ -531,18 +532,22 @@ const Colleges = () => {
                 className="border-2 border-purple-1 px-2 py-3 bg-purple-1 bg-opacity-5 rounded-lg"
                 onChange={(e) =>
                   // formik.setFieldValue("campusPhotos", e.currentTarget.files[0])
-                  setCampusPhotos([...campusPhotos, e.target.files[0]])
+                  formik.setFieldValue("campusPhotos", [
+                    ...formik.values.campusPhotos,
+                    e.target.files[0],
+                  ])
                 }
               />
               <div className="mt-2 flex gap-3">
-                {campusPhotos.map((item) => (
-                  <img
-                    key={item.name}
-                    src={URL.createObjectURL(item)}
-                    alt={item.name}
-                    style={{ width: 50, height: 50 }}
-                  />
-                ))}
+                {formik.values.campusPhotos &&
+                  formik.values.campusPhotos.map((item) => (
+                    <img
+                      key={item.name}
+                      src={URL.createObjectURL(item)}
+                      alt={item.name}
+                      style={{ width: 50, height: 50 }}
+                    />
+                  ))}
               </div>
             </div>
           </div>
