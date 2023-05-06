@@ -9,15 +9,34 @@ import { innerTableActionBtnDesign } from "./components/styles/innerTableActions
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import Select from "react-select";
+import { State, City } from "country-state-city";
 
 const COLLEGE_TYPE = ["Government", "Private", "Others"];
-const COLLEGE_TAG = ["Activities","Majors","Programs","Selectivity","Setting"];
-const COLLEGE_COURSES = ["BE/B.Tech","B.Arch","BCA","B.Sc","BPharma"];
+const COLLEGE_TAG = [
+  "AIIMS",
+  "JIPMER",
+  "Government Medical College",
+  "State Quota",
+  "Central Institute",
+  "Deemed College",
+  "ESIC",
+  "Government Aided",
+];
+const COLLEGE_COURSES = [
+  "MBBS",
+  "BDS",
+  "BAMS",
+  "BHMS",
+  "BSMS",
+  "BUMS",
+  "Others",
+];
 
 const Colleges = () => {
   const [show, setShow] = useState(false);
   const [collegeNameData, setCollegeNameData] = useState([]);
   const [campusPhotos, setCampusPhotos] = useState([]);
+  const [stateCode, setStateCode] = useState();
 
   // Declaring the States Required for the Working of the Component
   const [actions, setActions] = useReducer(
@@ -98,7 +117,7 @@ const Colleges = () => {
     formData.append("collegeCover", value.collegeCover);
     campusPhotos.map((item) => {
       formData.append("campusPhotos", item);
-    })
+    });
     delete value.collegeIcon;
     delete value.collegeCover;
     formData.append("data", JSON.stringify(value));
@@ -125,6 +144,11 @@ const Colleges = () => {
       title: "College Name",
       dataIndex: "collegeName",
       key: "collegeName",
+    },
+    {
+      title: "Display Name",
+      dataIndex: "displayName",
+      key: "displayName",
     },
     {
       title: "College Type",
@@ -158,7 +182,7 @@ const Colleges = () => {
       render: (courses) => (
         <>
           {courses.map((course) => (
-            <Tag key={course}>{course}</Tag>
+            <Tag key={course.value}>{course.value}</Tag>
           ))}
         </>
       ),
@@ -205,36 +229,44 @@ const Colleges = () => {
     );
   };
 
-  const formik = useFormik({
-    initialValues: {
-      displayName: "",
-      collegeName: "",
-      collegeType: "",
-      collegeTag: "",
-      coursesOffered: "",
-      estYear: "",
-      city: "",
-      state: "",
-      address: "",
-      website: "",
-      contactNumber: "",
-      contactEmail: "",
-      ranking: "",
-      hostnessScore: "",
-      cutOff: "",
-      tutionFees: "",
-      hostelFees: "",
-    },
-    validationSchema: Yup.object({
-      // title: Yup.string().required("Required"),
-      // description: Yup.string().required("Required"),
-    }),
-    onSubmit: (values) => {
-      handleNewCollege(values);
-    },
-  });
-
   const AddNewCollege = () => {
+    const formik = useFormik({
+      initialValues: {
+        displayName: "",
+        collegeName: "",
+        collegeType: "",
+        collegeTag: "",
+        coursesOffered: [],
+        estYear: "",
+        state: "",
+        city: "",
+        address: "",
+        website: "",
+        contactNumber: "",
+        contactEmail: "",
+        ranking: "",
+        hostnessScore: "",
+        cutOff: "",
+        tutionFees: "",
+        hostelFees: "",
+      },
+      validationSchema: Yup.object({
+        // title: Yup.string().required("Required"),
+        // description: Yup.string().required("Required"),
+      }),
+      onSubmit: (values) => {
+        handleNewCollege(values);
+      },
+    });
+
+    {
+      State.getStatesOfCountry("IN").find((item) => {
+        if (item.name === formik.values.state) {
+          setStateCode(item.isoCode);
+        }
+      });
+    }
+
     return (
       <form
         onSubmit={formik.handleSubmit}
@@ -288,13 +320,16 @@ const Colleges = () => {
                 Choose College Type
               </option>
               {COLLEGE_TYPE.map((val) => {
-                return <option key={val} value={val}>{val}</option>;
+                return (
+                  <option key={val} value={val}>
+                    {val}
+                  </option>
+                );
               })}
             </select>
           </div>
           <div className="">
             <select
-              multiple
               className="border-2 border-purple-1 px-2 py-3 bg-purple-1 bg-opacity-5 rounded-lg w-full"
               {...formik.getFieldProps("collegeTag")}
             >
@@ -302,23 +337,29 @@ const Colleges = () => {
                 Choose College Tag
               </option>
               {COLLEGE_TAG.map((val) => {
-                return <option key={val} value={val}>{val}</option>;
+                return (
+                  <option key={val} value={val}>
+                    {val}
+                  </option>
+                );
               })}
             </select>
           </div>
           <div className="">
-            <select
-              multiple
-              className="border-2 border-purple-1 px-2 py-3 bg-purple-1 bg-opacity-5 rounded-lg w-full"
-              {...formik.getFieldProps("coursesOffered")}
-            >
-              <option disabled value="">
-                Courses Offered
-              </option>
-              {COLLEGE_COURSES.map((val) => {
-                return <option key={val} value={val}>{val}</option>;
+            <Select
+              isMulti
+              value={formik.values.coursesOffered}
+              placeholder={`Select Courses Offered`}
+              options={COLLEGE_COURSES?.map((value) => {
+                return {
+                  value: value,
+                  label: value,
+                };
               })}
-            </select>
+              onChange={(e) => {
+                formik.setFieldValue("coursesOffered", e);
+              }}
+            />
           </div>
           <div className="">
             <input
@@ -365,26 +406,32 @@ const Colleges = () => {
             ) : null}
           </div>
           <div className="">
-            <input
-              type="text"
-              placeholder="City"
-              className="border-2 border-purple-1 px-2 py-3 bg-purple-1 bg-opacity-5 rounded-lg w-full "
-              {...formik.getFieldProps("city")}
-            />
-            {formik.touched.city && formik.errors.city ? (
-              <div>{formik.errors.city}</div>
-            ) : null}
+            <select
+              placeholder="State Name"
+              className="border-2 border-purple-1 px-2 py-3 bg-purple-1 bg-opacity-5 rounded-lg w-full"
+              {...formik.getFieldProps("state")}
+            >
+              <option value="" disabled>
+                Select State
+              </option>
+              {State.getStatesOfCountry("IN").map((item) => {
+                return <option value={item.name}>{item.name}</option>;
+              })}
+            </select>
           </div>
           <div className="">
-            <input
-              type="text"
-              placeholder="State"
+            <select
+              placeholder="City Name"
               className="border-2 border-purple-1 px-2 py-3 bg-purple-1 bg-opacity-5 rounded-lg w-full "
-              {...formik.getFieldProps("state")}
-            />
-            {formik.touched.state && formik.errors.state ? (
-              <div>{formik.errors.state}</div>
-            ) : null}
+              {...formik.getFieldProps("city")}
+            >
+              <option value="" disabled>
+                Select City
+              </option>
+              {City.getCitiesOfState("IN", stateCode).map((item) => (
+                <option value={item.name}>{item.name}</option>
+              ))}
+            </select>
           </div>
           <div className="">
             <input
@@ -489,13 +536,18 @@ const Colleges = () => {
               />
               <div className="mt-2 flex gap-3">
                 {campusPhotos.map((item) => (
-                  <img key={item.name} src={URL.createObjectURL(item)} alt={item.name}  style={{ width: 50, height: 50 }} />
+                  <img
+                    key={item.name}
+                    src={URL.createObjectURL(item)}
+                    alt={item.name}
+                    style={{ width: 50, height: 50 }}
+                  />
                 ))}
               </div>
             </div>
           </div>
           <button
-            className="ml-10 text-xl bg-secondary text-white p-3 rounded-xl"
+            className="text-xl bg-secondary text-white p-3 rounded-xl"
             type="submit"
           >
             Submit
