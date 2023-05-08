@@ -8,7 +8,7 @@ import { innerTableActionBtnDesign } from "./components/styles/innerTableActions
 import { DrawerComp } from "./components/Drawers/UserFollowUp";
 import { useFormik } from "formik";
 
-const EXAM_TYPE = ["All India"];
+const EXAM_TYPE = ["All India", "NEET/U.P."];
 
 const PredictorData = () => {
   const [show, setShow] = useState(false);

@@ -247,6 +247,7 @@ const Colleges = () => {
         ranking: "",
         hostnessScore: "",
         cutOff: "",
+        applicationLink: "",
         tutionFees: "",
         hostelFees: "",
         campusPhotos: [],
@@ -476,6 +477,17 @@ const Colleges = () => {
             />
             {formik.touched.cutOff && formik.errors.cutOff ? (
               <div>{formik.errors.cutOff}</div>
+            ) : null}
+          </div>
+          <div className="">
+            <input
+              type="text"
+              placeholder="Application Link"
+              className="border-2 border-purple-1 px-2 py-3 bg-purple-1 bg-opacity-5 rounded-lg w-full "
+              {...formik.getFieldProps("applicationLink")}
+            />
+            {formik.touched.applicationLink && formik.errors.applicationLink ? (
+              <div>{formik.errors.applicationLink}</div>
             ) : null}
           </div>
           <div className="">
