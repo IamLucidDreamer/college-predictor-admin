@@ -7,8 +7,10 @@ import { CloseOutlined, EyeOutlined } from "@ant-design/icons";
 import { innerTableActionBtnDesign } from "./components/styles/innerTableActions";
 import { DrawerComp } from "./components/Drawers/UserFollowUp";
 import { useFormik } from "formik";
+import * as Yup from "yup";
+import { State } from "country-state-city";
 
-const EXAM_TYPE = ["All India", "NEET/U.P."];
+const EXAM_TYPE = ["NEET", "AYUSH"];
 
 const PredictorData = () => {
   const [show, setShow] = useState(false);
@@ -75,16 +77,27 @@ const PredictorData = () => {
     setActions({ loading: true });
     const formData = new FormData();
     formData.append("file", value.file);
-    formData.append("examType", value.examType);
-    axios
-      .post("/neet/bulk-upload", formData)
-      .then((res) => {
-        toast.success("New Data Added Successfully.");
-        setShow(false);
-        requestsCaller();
-      })
-      .catch((err) => console.log(err))
-      .finally(() => setActions({ loading: false }));
+    formData.append(
+      "examType",
+      `${value.examType}/${value.counsellingCategory}`
+    );
+    if (value.examType === "NEET") {
+      axios
+        .post("/neet/bulk-upload", formData)
+        .then((res) => {
+          toast.success("New Data Added Successfully.");
+          setShow(false);
+          requestsCaller();
+        })
+        .catch((err) => console.log(err))
+        .finally(() => setActions({ loading: false }));
+    } else if (value.examType === "AYUSH") {
+      toast.warning("Database Checks not complete for this Exam Type");
+      setActions({ loading: false });
+    } else {
+      toast.error("Invalide Exam Type");
+      setActions({ loading: false });
+    }
   };
 
   useEffect(() => requestsCaller(), []);
@@ -97,8 +110,10 @@ const PredictorData = () => {
   const columns = [
     {
       key: "examType",
-      title: "Exam Type",
-      render: (data) => data?.examType,
+      title: "Counselling Type",
+      render: (data) => (
+        <div className="bg-red-200 text-center">{data?.examType}</div>
+      ),
     },
     {
       key: "course",
@@ -129,6 +144,11 @@ const PredictorData = () => {
       key: "instituteName",
       title: "Institute Name",
       render: (data) => data?.instituteName,
+    },
+    {
+      key: "instituteType",
+      title: "Institute Type",
+      render: (data) => (data?.instituteType ? data?.instituteType : "--"),
     },
     {
       key: "examCategory",
@@ -173,7 +193,14 @@ const PredictorData = () => {
   };
 
   const formik = useFormik({
-    initialValues: { examType: "" },
+    initialValues: {
+      examType: "",
+      counsellingCategory: "",
+    },
+    validationSchema: Yup.object({
+      examType: Yup.string().required("Required"),
+      counsellingCategory: Yup.string().required("Required"),
+    }),
     onSubmit: (values) => {
       handleNewData(values);
     },
@@ -219,6 +246,29 @@ const PredictorData = () => {
                   })}
                 </select>
               </div>
+              {formik.touched.examType && formik.errors.examType ? (
+                <div className="text-red-500">{formik.errors.examType}</div>
+              ) : null}
+              <div className="mt-4">
+                <select
+                  className="border-2 border-purple-1 px-2 py-3 bg-purple-1 bg-opacity-5 rounded-lg w-full"
+                  {...formik.getFieldProps("counsellingCategory")}
+                >
+                  <option disabled value="">
+                    Choose Counselling Category
+                  </option>
+                  <option value="All India">All India</option>
+                  {State.getStatesOfCountry("IN").map((item) => {
+                    return <option value={item.name}>{item.name}</option>;
+                  })}
+                </select>
+              </div>
+              {formik.touched.counsellingCategory &&
+              formik.errors.counsellingCategory ? (
+                <div className="text-red-500">
+                  {formik.errors.counsellingCategory}
+                </div>
+              ) : null}
               <h1 className="my-2 font-semibold">New Data</h1>
               <input
                 type="file"
