@@ -9,11 +9,13 @@ import { DrawerComp } from "./components/Drawers/UserFollowUp";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { State } from "country-state-city";
+import { Button } from "antd";
 
 const EXAM_TYPE = ["NEET", "AYUSH"];
 
 const PredictorData = () => {
   const [show, setShow] = useState(false);
+  const [isDelete, setIsDelete] = useState(false);
 
   // Declaring the States Required for the Working of the Component
   const [actions, setActions] = useReducer(
@@ -86,6 +88,34 @@ const PredictorData = () => {
         .post("/neet/bulk-upload", formData)
         .then((res) => {
           toast.success("New Data Added Successfully.");
+          setShow(false);
+          requestsCaller();
+        })
+        .catch((err) => console.log(err))
+        .finally(() => setActions({ loading: false }));
+    } else if (value.examType === "AYUSH") {
+      toast.warning("Database Checks not complete for this Exam Type");
+      setActions({ loading: false });
+    } else {
+      toast.error("Invalide Exam Type");
+      setActions({ loading: false });
+    }
+  };
+
+  const handleDeleteData = (value) => {
+    setActions({ loading: true });
+    if (value.year === "") {
+      toast.error("Please Select Year");
+      return;
+    }
+    const data = {};
+    data.examType = `${value.examType}/${value.counsellingCategory}`;
+    data.year = value.year;
+    if (value.examType === "NEET") {
+      axios
+        .post("/neet/delete", data)
+        .then((res) => {
+          toast.success(`${res?.data?.data?.deletedCount} ${res?.data?.message}`);
           setShow(false);
           requestsCaller();
         })
@@ -196,13 +226,14 @@ const PredictorData = () => {
     initialValues: {
       examType: "",
       counsellingCategory: "",
+      year: "",
     },
     validationSchema: Yup.object({
       examType: Yup.string().required("Required"),
       counsellingCategory: Yup.string().required("Required"),
     }),
     onSubmit: (values) => {
-      handleNewData(values);
+      isDelete ? handleDeleteData(values) : handleNewData(values);
     },
   });
 
@@ -223,9 +254,25 @@ const PredictorData = () => {
       />
       {show ? (
         <form className="my-6 max-w-screen-lg mx-auto">
+          <div className="flex items-center justify-evenly gap-4 my-4">
+            <Button
+              type="primary"
+              onClick={() => setIsDelete(false)}
+              className="w-40"
+            >
+              Add
+            </Button>
+            <Button
+              type="primary"
+              onClick={() => setIsDelete(true)}
+              className="w-40"
+            >
+              Delete
+            </Button>
+          </div>
           <div className="flex items-center justify-between gap-4">
             <h1 className="text-xl text-purple-1 m-0">
-              Add New Predictor Data
+              {isDelete ? "Delete Predictor Data" : "Add New Predictor Data"}
             </h1>
             <button className="ml-10 mt-0 pt-0" onClick={() => setShow(false)}>
               <CloseOutlined style={{ fontSize: "20px" }} />
@@ -269,17 +316,55 @@ const PredictorData = () => {
                   {formik.errors.counsellingCategory}
                 </div>
               ) : null}
-              <h1 className="my-2 font-semibold">New Data</h1>
-              <input
-                type="file"
-                placeholder="Name of Packaging Type "
-                className="border-2 border-purple-1 px-2 py-3 bg-purple-1 bg-opacity-5 rounded-lg my-2"
-                onChange={(e) => {
-                  e.preventDefault();
-                  console.log(e.currentTarget.files[0]);
-                  formik.setFieldValue("file", e.currentTarget.files[0]);
-                }}
-              />
+              {isDelete && (
+                <div className="mt-4">
+                  <select
+                    className="border-2 border-purple-1 px-2 py-3 bg-purple-1 bg-opacity-5 rounded-lg w-full"
+                    {...formik.getFieldProps("year")}
+                  >
+                    <option disabled value="">
+                      Choose Year
+                    </option>
+                    {[
+                      "2013",
+                      "2014",
+                      "2015",
+                      "2016",
+                      "2017",
+                      "2018",
+                      "2019",
+                      "2020",
+                      "2021",
+                      "2022",
+                      "2023",
+                      "2024",
+                      "2025",
+                      "2026",
+                      "2027",
+                      "2028",
+                      "2029",
+                      "2030",
+                    ].map((item) => {
+                      return <option value={item}>{item}</option>;
+                    })}
+                  </select>
+                </div>
+              )}
+              {!isDelete && (
+                <>
+                  <h1 className="my-2 font-semibold">New Data</h1>
+                  <input
+                    type="file"
+                    placeholder="Name of Packaging Type "
+                    className="border-2 border-purple-1 px-2 py-3 bg-purple-1 bg-opacity-5 rounded-lg my-2"
+                    onChange={(e) => {
+                      e.preventDefault();
+                      console.log(e.currentTarget.files[0]);
+                      formik.setFieldValue("file", e.currentTarget.files[0]);
+                    }}
+                  />
+                </>
+              )}
             </div>
           </div>
           <button
@@ -288,9 +373,9 @@ const PredictorData = () => {
               e.preventDefault();
               formik.handleSubmit();
             }}
-            className="text-xl bg-secondary text-white p-3 rounded-xl w-full"
+            className="text-xl bg-secondary text-white p-3 rounded-xl w-full mt-4"
           >
-            Submit
+            {isDelete ? "Delete" : "Submit"}
           </button>
         </form>
       ) : null}
