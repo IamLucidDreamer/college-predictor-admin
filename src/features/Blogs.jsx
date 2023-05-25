@@ -4,7 +4,7 @@ import ActionButtons from "./components/actionsButtons/Index";
 import { DataTable } from "./components/table/Index";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { EyeOutlined, CloseOutlined } from "@ant-design/icons";
+import { EyeOutlined, CloseOutlined, DeleteOutlined } from "@ant-design/icons";
 import { innerTableActionBtnDesign } from "./components/styles/innerTableActions";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -89,7 +89,16 @@ const Blogs = () => {
       .finally(() => setActions({ loading: false }));
   };
 
-  const deletePackaging = () => {};
+  const deleteBlog = (id) => {
+    axios
+      .delete(`/blog/delete/${id}`)
+      .then((res) => {
+        toast.success("Blog Removed Successfully.");
+        requestsCaller();
+      })
+      .catch((err) => console.log(err))
+      .finally(() => setActions({ loading: false }));
+  };
 
   const showAddNew = () => setShow(true);
 
@@ -133,13 +142,20 @@ const Blogs = () => {
 
   const ColumnActions = (props) => {
     return (
-      <div className="flex justify-around opacity-25">
+      <div className="flex justify-around">
         <EyeOutlined
           title="View"
-          style={innerTableActionBtnDesign}
+          style={{ ...innerTableActionBtnDesign, opacity: "25%" }}
           onClick={() => {
             setActions({ drawer: true });
             setValue({ drawerValue: props?.record });
+          }}
+        />
+        <DeleteOutlined
+          title="View"
+          style={innerTableActionBtnDesign}
+          onClick={() => {
+            deleteBlog(props.record._id);
           }}
         />
       </div>

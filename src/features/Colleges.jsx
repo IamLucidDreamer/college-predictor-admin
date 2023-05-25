@@ -4,7 +4,7 @@ import ActionButtons from "./components/actionsButtons/Index";
 import { DataTable } from "./components/table/Index";
 import { Tag } from "antd";
 import { toast } from "react-toastify";
-import { EyeOutlined, CloseOutlined } from "@ant-design/icons";
+import { EyeOutlined, CloseOutlined, DeleteOutlined } from "@ant-design/icons";
 import { innerTableActionBtnDesign } from "./components/styles/innerTableActions";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -83,7 +83,7 @@ const Colleges = () => {
   const requestsCaller = () => {
     setActions({ loading: true });
     axios
-      .get("/college/get-all")
+      .get("/college/get-all?limit=10000&skip=0")
       .then((res) => {
         setValue({
           college: res?.data?.data?.College,
@@ -125,6 +125,17 @@ const Colleges = () => {
         toast.success("New Update Added Successfully.");
         requestsCaller();
         setShow(false);
+      })
+      .catch((err) => console.log(err))
+      .finally(() => setActions({ loading: false }));
+  };
+
+  const deleteCollege = (id) => {
+    axios
+      .delete(`/college/delete/${id}`)
+      .then((res) => {
+        toast.success("College Removed Successfully.");
+        requestsCaller();
       })
       .catch((err) => console.log(err))
       .finally(() => setActions({ loading: false }));
@@ -210,6 +221,11 @@ const Colleges = () => {
       dataIndex: "contactNumber",
       key: "contactNumber",
     },
+    {
+      key: "actions",
+      title: "Actions",
+      render: (record) => <ColumnActions record={record} />,
+    },
   ];
 
   const ColumnActions = (props) => {
@@ -217,10 +233,17 @@ const Colleges = () => {
       <div className="flex justify-around">
         <EyeOutlined
           title="View"
-          style={innerTableActionBtnDesign}
+          style={{ ...innerTableActionBtnDesign, opacity: "25%" }}
           onClick={() => {
             setActions({ drawer: true });
             setValue({ drawerValue: props?.record });
+          }}
+        />
+        <DeleteOutlined
+          title="View"
+          style={innerTableActionBtnDesign}
+          onClick={() => {
+            deleteCollege(props.record._id);
           }}
         />
       </div>
@@ -246,7 +269,6 @@ const Colleges = () => {
         contactEmail: "",
         ranking: "",
         hostnessScore: "",
-        cutOff: "",
         applicationLink: "",
         tutionFees: "",
         hostelFees: "",
@@ -466,17 +488,6 @@ const Colleges = () => {
             />
             {formik.touched.ranking && formik.errors.ranking ? (
               <div>{formik.errors.ranking}</div>
-            ) : null}
-          </div>
-          <div className="">
-            <input
-              type="text"
-              placeholder="Cut Off"
-              className="border-2 border-purple-1 px-2 py-3 bg-purple-1 bg-opacity-5 rounded-lg w-full "
-              {...formik.getFieldProps("cutOff")}
-            />
-            {formik.touched.cutOff && formik.errors.cutOff ? (
-              <div>{formik.errors.cutOff}</div>
             ) : null}
           </div>
           <div className="">
