@@ -16,6 +16,7 @@ const EXAM_TYPE = ["NEET", "AYUSH"];
 const PredictorData = () => {
   const [show, setShow] = useState(false);
   const [isDelete, setIsDelete] = useState(false);
+  const [ayush, setAyush] = useState(false);
 
   // Declaring the States Required for the Working of the Component
   const [actions, setActions] = useReducer(
@@ -49,30 +50,56 @@ const PredictorData = () => {
   // Functions Used for Different Data
   const requestsCaller = () => {
     setActions({ loading: true });
-    axios
-      .get("/neet/get-all?limit=100000")
-      .then((res) => {
-        setValue({
-          neetData: res.data.data?.neetData,
-        });
-      })
-      .catch((err) => console.log(err))
-      .finally(() => setActions({ loading: false }));
+    if (!ayush) {
+      axios
+        .get("/neet/get-all?limit=100000")
+        .then((res) => {
+          setValue({
+            neetData: res.data.data?.neetData,
+          });
+        })
+        .catch((err) => console.log(err))
+        .finally(() => setActions({ loading: false }));
+    } else {
+      axios
+        .get("/ayush/get-all?limit=100000")
+        .then((res) => {
+          setValue({
+            neetData: res.data.data?.neetData,
+          });
+        })
+        .catch((err) => console.log(err))
+        .finally(() => setActions({ loading: false }));
+    }
   };
 
   const getAllNeetData = () => {
     setActions({ loadingAllNeetData: true });
-    axios
-      .get("/neet/get-all?limit=100000")
-      .then((res) => {
-        toast.success("Predictor Data Ready for Download");
-        setActions({ downloadAllNeetData: true });
-        setValue({
-          allNeetData: res.data.data?.neetData,
-        });
-      })
-      .catch((err) => console.log(err))
-      .finally(() => setActions({ loadingAllNeetData: false }));
+    if (!ayush) {
+      axios
+        .get("/neet/get-all?limit=100000")
+        .then((res) => {
+          toast.success("Predictor Data Ready for Download");
+          setActions({ downloadAllNeetData: true });
+          setValue({
+            allNeetData: res.data.data?.neetData,
+          });
+        })
+        .catch((err) => console.log(err))
+        .finally(() => setActions({ loadingAllNeetData: false }));
+    } else {
+      axios
+        .get("/ayush/get-all?limit=100000")
+        .then((res) => {
+          toast.success("Predictor Data Ready for Download");
+          setActions({ downloadAllNeetData: true });
+          setValue({
+            allNeetData: res.data.data?.neetData,
+          });
+        })
+        .catch((err) => console.log(err))
+        .finally(() => setActions({ loadingAllNeetData: false }));
+    }
   };
 
   const handleNewData = (value) => {
@@ -94,8 +121,15 @@ const PredictorData = () => {
         .catch((err) => console.log(err))
         .finally(() => setActions({ loading: false }));
     } else if (value.examType === "AYUSH") {
-      toast.warning("Database Checks not complete for this Exam Type");
-      setActions({ loading: false });
+      axios
+        .post("/ayush/bulk-upload", formData)
+        .then((res) => {
+          toast.success("New Data Added Successfully.");
+          setShow(false);
+          requestsCaller();
+        })
+        .catch((err) => console.log(err))
+        .finally(() => setActions({ loading: false }));
     } else {
       toast.error("Invalide Exam Type");
       setActions({ loading: false });
@@ -115,22 +149,33 @@ const PredictorData = () => {
       axios
         .post("/neet/delete", data)
         .then((res) => {
-          toast.success(`${res?.data?.data?.deletedCount} ${res?.data?.message}`);
+          toast.success(
+            `${res?.data?.data?.deletedCount} ${res?.data?.message}`
+          );
           setShow(false);
           requestsCaller();
         })
         .catch((err) => console.log(err))
         .finally(() => setActions({ loading: false }));
     } else if (value.examType === "AYUSH") {
-      toast.warning("Database Checks not complete for this Exam Type");
-      setActions({ loading: false });
+      axios
+        .post("/ayush/delete", data)
+        .then((res) => {
+          toast.success(
+            `${res?.data?.data?.deletedCount} ${res?.data?.message}`
+          );
+          setShow(false);
+          requestsCaller();
+        })
+        .catch((err) => console.log(err))
+        .finally(() => setActions({ loading: false }));
     } else {
       toast.error("Invalide Exam Type");
       setActions({ loading: false });
     }
   };
 
-  useEffect(() => requestsCaller(), []);
+  useEffect(() => requestsCaller(), [ayush]);
 
   const showAddNew = () => setShow(true);
 
@@ -252,6 +297,14 @@ const PredictorData = () => {
         showAddNewButton={true}
         addNewFunction={showAddNew}
       />
+      <div className="flex gap-4 mt-2">
+        <Button type="primary" onClick={() => setAyush(false)}>
+          NEET
+        </Button>
+        <Button type="primary" onClick={() => setAyush(true)}>
+          AYUSH
+        </Button>
+      </div>
       {show ? (
         <form className="my-6 max-w-screen-lg mx-auto">
           <div className="flex items-center justify-evenly gap-4 my-4">
