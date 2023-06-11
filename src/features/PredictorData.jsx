@@ -65,7 +65,7 @@ const PredictorData = () => {
         .get("/ayush/get-all?limit=100000")
         .then((res) => {
           setValue({
-            neetData: res.data.data?.neetData,
+            neetData: res.data.data?.ayushData,
           });
         })
         .catch((err) => console.log(err))
