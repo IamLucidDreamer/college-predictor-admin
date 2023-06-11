@@ -8,6 +8,7 @@ import { innerTableActionBtnDesign } from "./components/styles/innerTableActions
 import { DrawerComp } from "./components/Drawers/UserFollowUp";
 import { Button } from "antd";
 import { useSelector } from "react-redux";
+import dayjs from "dayjs";
 
 const EndUsers = () => {
   const user = useSelector((state) => state?.user);
@@ -82,6 +83,11 @@ const EndUsers = () => {
       key: "name",
       title: "Name",
       render: (data) => data.name,
+    },
+    {
+      key: "registeredOn",
+      title: "Registered On",
+      render: (data) =><h1>{dayjs(data?.createdAt).format("YYYY-MM-DD  HH:mm")}</h1>,
     },
     {
       key: "exam",
