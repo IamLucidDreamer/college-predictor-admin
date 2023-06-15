@@ -242,6 +242,7 @@ const Updates = () => {
                     formik.setFieldValue("imageMain", e.currentTarget.files[0])
                   }
                 />
+                <h1 className="text-xs text-red-600">max size 4MB</h1>
               </div>
               <div className="">
                 <h1>Document</h1>
@@ -253,6 +254,7 @@ const Updates = () => {
                     formik.setFieldValue("document", e.currentTarget.files[0])
                   }
                 />
+                <h1 className="text-xs text-red-600">max size 4MB</h1>
               </div>
             </div>
             <button
