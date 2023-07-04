@@ -61,7 +61,7 @@ const EndUsers = () => {
   const getAllEndUser = () => {
     setActions({ loadingAllProducts: true });
     axios
-      .get("/user/get-all")
+      .get(`/user/get-all?getAll=${showGetAll}`)
       .then((res) => {
         toast.success("Users Ready for Download");
         setActions({ downloadAllEndUser: true });
@@ -87,7 +87,9 @@ const EndUsers = () => {
     {
       key: "registeredOn",
       title: "Registered On",
-      render: (data) =><h1>{dayjs(data?.createdAt).format("YYYY-MM-DD  HH:mm")}</h1>,
+      render: (data) => (
+        <h1>{dayjs(data?.createdAt).format("YYYY-MM-DD  HH:mm")}</h1>
+      ),
     },
     {
       key: "exam",
