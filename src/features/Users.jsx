@@ -122,6 +122,11 @@ const EndUsers = () => {
       render: (data) => data.twelthMarks,
     },
     {
+      key: "medicalMarks",
+      title: "NEET Marks",
+      render: (data) => data.medicalMarks,
+    },
+    {
       key: "address",
       title: "Address",
       render: (data) => data.address,
