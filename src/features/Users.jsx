@@ -127,6 +127,11 @@ const EndUsers = () => {
       render: (data) => data.medicalMarks,
     },
     {
+      key: "course",
+      title: "Course Interested",
+      render: (data) => data.course,
+    },
+    {
       key: "address",
       title: "Address",
       render: (data) => data.address,
