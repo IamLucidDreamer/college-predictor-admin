@@ -9,14 +9,14 @@ export const DataTable = ({
   differUserRows,
   rowSelection,
   differRows,
-  pagination,
+  pagination = true,
 }) => {
   return (
     <div className="shadow-lg">
       <Table
         columns={columns}
         dataSource={usersData}
-        pagination={true}
+        pagination={pagination}
         loading={loading}
       />
     </div>

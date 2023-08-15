@@ -11,6 +11,7 @@ import {
   FormOutlined,
   ApartmentOutlined,
   MailOutlined,
+  BellOutlined,
 } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import Logo from "../../../assets/images/careerkick_logo.png";
@@ -83,6 +84,15 @@ const menuOptions = [
     isCounselor: false,
     isCollegeAdmin: false,
   },
+  {
+    title: "Push Notifications",
+    optionName: "Notifications",
+    icon: <BellOutlined style={{ fontSize: "20px" }} />,
+    route: "/admin/push-notifications",
+    isAdmin: true,
+    isCounselor: false,
+    isCollegeAdmin: false,
+  },
 ];
 
 const Sidebar = ({ setTitle }) => {
@@ -113,7 +123,7 @@ const Sidebar = ({ setTitle }) => {
         style={{ backgroundColor: "#fff", marginTop: "10px" }}
       >
         {menuOptions.map((val, index) => {
-          const key = 1
+          const key = 1;
           if (
             (user.role === 2 && val?.isCounselor) ||
             (user.role === 3 && val?.isAdmin) ||

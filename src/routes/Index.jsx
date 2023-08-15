@@ -13,6 +13,7 @@ import Blogs from "../features/Blogs";
 import Colleges from "../features/Colleges";
 import Subscriber from "../features/Subscriber";
 import PredictorData from "../features/PredictorData";
+import PushNotifications from "../features/PushNotifications";
 
 // import { Users } from "../users/Index";
 // import { Approvals } from "../approvals/Index";
@@ -75,6 +76,13 @@ const Index = () => {
     {
       route: "subscribers",
       component: <Subscriber />,
+      isAdmin: true,
+      isCounselor: false,
+      isCollegeAdmin: false,
+    },
+    {
+      route: "push-notifications",
+      component: <PushNotifications />,
       isAdmin: true,
       isCounselor: false,
       isCollegeAdmin: false,
