@@ -48,7 +48,7 @@ const EndUsers = () => {
   const requestsCaller = () => {
     setActions({ loading: true });
     axios
-      .get(`/user/get-all?isAdmin=${user?.role === 3 ? true : false }&getAll=${showGetAll}`)
+      .get(`/user/get-all?${user?.role === 3 ? "isAdmin=true" : "" }&getAll=${showGetAll}`)
       .then((res) => {
         setValue({
           endUser: res.data.data,
@@ -197,7 +197,7 @@ const EndUsers = () => {
         pageTitle={"Users"}
         showReFreshButton={true}
         refreshFunction={requestsCaller}
-        showExportDataButton={true}
+        showExportDataButton={user?.role === 3 ? true : false}
         exportDataFunction={getAllEndUser}
         totalItems={allEndUser}
         csvName={"End Users"}
