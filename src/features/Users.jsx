@@ -48,7 +48,7 @@ const EndUsers = () => {
   const requestsCaller = () => {
     setActions({ loading: true });
     axios
-      .get(`/user/get-all?getAll=${showGetAll}`)
+      .get(`/user/get-all?isAdmin=${user?.role === 3 ? true : false }&getAll=${showGetAll}`)
       .then((res) => {
         setValue({
           endUser: res.data.data,
