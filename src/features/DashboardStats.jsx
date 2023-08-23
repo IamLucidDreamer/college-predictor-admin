@@ -13,10 +13,12 @@ import {
   EditOutlined,
   UserAddOutlined,
 } from "@ant-design/icons";
+import { DataTable } from "./components/table/Index";
 
 const DashboardStats = () => {
   const [loading, setLoading] = useState(false);
   const [stats, setStats] = useState("");
+  const [counsellorData, setCounsellorData] = useState([]);
 
   const dataLoader = () => {
     setLoading(true);
@@ -25,13 +27,44 @@ const DashboardStats = () => {
       .then((res) => {
         setStats(res.data.data);
       })
+      .catch((err) => console.log(err));
+    axios
+      .get(`/statistics/counsellor/calls`)
+      .then((res) => {
+        setCounsellorData(res?.data?.data);
+      })
       .catch((err) => console.log(err))
-      .finally(setLoading(false));
+    setLoading(false)
   };
 
   useEffect(() => {
     dataLoader();
   }, []);
+
+  // Table Column
+  const columns = [
+    {
+      key: "name",
+      title: "Name",
+      render: (data) => data?.reviewer?.name,
+    },
+    {
+      key: "phoneNumber",
+      title: "Phone Number",
+      render: (data) => data?.reviewer?.phoneNumber,
+    },
+    {
+      key: "email",
+      title: "Email",
+      render: (data) => data?.reviewer?.email,
+    },
+    {
+      key: "totalReviewedUsers",
+      title: "Total Counselled Students",
+      render: (data) => data?.totalReviewedUsers,
+    },
+
+  ];
 
   return (
     <div className="relative px-4 py-2">
@@ -57,7 +90,7 @@ const DashboardStats = () => {
           </div>
         </div>
       </div>
-      <div className="flex flex-wrap items-center mt-10 gap-8">
+      <div className="flex flex-wrap items-center my-10 gap-8 justify-center">
         <StatsCard
           title={"Total Colleges"}
           stat={stats?.collegeCount}
@@ -82,6 +115,14 @@ const DashboardStats = () => {
           title={"Total Blogs"}
           stat={stats?.totalBlogsCount}
           icon={<SnippetsOutlined style={{ fontSize: "40px" }} />}
+        />
+      </div>
+      <div>
+        <h1 className="text-2xl text-center">Counsellor Call Details</h1>
+        <DataTable
+          usersData={counsellorData}
+          columns={columns}
+          loading={loading}
         />
       </div>
     </div>
