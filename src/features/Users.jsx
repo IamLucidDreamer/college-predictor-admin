@@ -3,10 +3,10 @@ import axios from "../appConfig/httpHelper";
 import ActionButtons from "./components/actionsButtons/Index";
 import { DataTable } from "./components/table/Index";
 import { toast } from "react-toastify";
-import { EyeOutlined, PhoneOutlined } from "@ant-design/icons";
+import { EyeOutlined, PhoneOutlined, SearchOutlined } from "@ant-design/icons";
 import { innerTableActionBtnDesign } from "./components/styles/innerTableActions";
 import { DrawerComp } from "./components/Drawers/UserFollowUp";
-import { Button } from "antd";
+import { Button, Input } from "antd";
 import { useSelector } from "react-redux";
 import dayjs from "dayjs";
 
@@ -14,6 +14,7 @@ const EndUsers = () => {
   const user = useSelector((state) => state?.user);
 
   const [showGetAll, setShowGetAll] = useState(1);
+  let searchInput;
 
   // Declaring the States Required for the Working of the Component
   const [actions, setActions] = useReducer(
@@ -48,7 +49,11 @@ const EndUsers = () => {
   const requestsCaller = () => {
     setActions({ loading: true });
     axios
-      .get(`/user/get-all?${user?.role === 3 ? "isAdmin=true" : "" }&getAll=${showGetAll}`)
+      .get(
+        `/user/get-all?isAdmin=${
+          user?.role === 3 ? 1 : ""
+        }&getAll=${showGetAll}`
+      )
       .then((res) => {
         setValue({
           endUser: res.data.data,
@@ -77,12 +82,78 @@ const EndUsers = () => {
 
   const onCloseDrawer = () => setActions({ drawer: false });
 
+  const [searchText, setSearchText] = useState("");
+  const [searchedColumn, setSearchedColumn] = useState("");
+
+  const getColumnSearchProps = (dataIndex) => ({
+    filterDropdown: ({
+      setSelectedKeys,
+      selectedKeys,
+      confirm,
+      clearFilters,
+    }) => (
+      <div style={{ padding: 8 }}>
+        <Input
+          placeholder={`Search ${dataIndex}`}
+          value={selectedKeys[0]}
+          onChange={(e) =>
+            setSelectedKeys(e.target.value ? [e.target.value] : [])
+          }
+          onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
+          style={{ marginBottom: 8, display: "block" }}
+        />
+        <div>
+          <button
+            type="button"
+            onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
+            style={{ marginRight: 8 }}
+          >
+            Search
+          </button>
+          <button
+            onClick={() => handleReset(clearFilters)}
+            style={{ marginRight: 8 }}
+          >
+            Reset
+          </button>
+        </div>
+      </div>
+    ),
+    filterIcon: (filtered) => (
+      <SearchOutlined className="text-xl bg-primary p-1 rounded-full" style={{ color: filtered ? "#ffffff" : "#ffffff" }} />
+    ),
+    onFilter: (value, record) =>
+      record[dataIndex]
+        ? record[dataIndex]
+            .toString()
+            .toLowerCase()
+            .includes(value.toLowerCase())
+        : "",
+    onFilterDropdownVisibleChange: (visible) => {
+      if (visible) {
+        setTimeout(() => searchInput.select(), 100);
+      }
+    },
+  });
+
+  const handleSearch = (selectedKeys, confirm, dataIndex) => {
+    confirm();
+    setSearchText(selectedKeys[0]);
+    setSearchedColumn(dataIndex);
+  };
+
+  const handleReset = (clearFilters) => {
+    clearFilters();
+    setSearchText("");
+  };
+
   // Table Column
   const columns = [
     {
       key: "name",
       title: "Name",
       render: (data) => data.name,
+      ...getColumnSearchProps('name'),
     },
     {
       key: "registeredOn",
@@ -100,16 +171,19 @@ const EndUsers = () => {
       key: "email",
       title: "Email",
       render: (data) => data.email,
+      ...getColumnSearchProps('email'),
     },
     {
       key: "city",
       title: "City",
       render: (data) => data.city,
+      ...getColumnSearchProps('city'),
     },
     {
       key: "state",
       title: "State",
       render: (data) => data.state,
+      ...getColumnSearchProps('state'),
     },
     {
       key: "tenthMarks",
@@ -130,6 +204,7 @@ const EndUsers = () => {
       key: "course",
       title: "Course Interested",
       render: (data) => data.course,
+      ...getColumnSearchProps('course'),
     },
     {
       key: "address",
@@ -145,6 +220,7 @@ const EndUsers = () => {
       key: "phoneNumber",
       title: "Phone",
       render: (data) => data.phoneNumber,
+      ...getColumnSearchProps('phoneNumber'),
     },
     {
       key: "actions",
