@@ -14,6 +14,7 @@ import Colleges from "../features/Colleges";
 import Subscriber from "../features/Subscriber";
 import PredictorData from "../features/PredictorData";
 import PushNotifications from "../features/PushNotifications";
+import Referral from "../features/Referral";
 
 // import { Users } from "../users/Index";
 // import { Approvals } from "../approvals/Index";
@@ -83,6 +84,13 @@ const Index = () => {
     {
       route: "push-notifications",
       component: <PushNotifications />,
+      isAdmin: true,
+      isCounselor: false,
+      isCollegeAdmin: false,
+    },
+    {
+      route: "referral-link",
+      component: <Referral />,
       isAdmin: true,
       isCounselor: false,
       isCollegeAdmin: false,

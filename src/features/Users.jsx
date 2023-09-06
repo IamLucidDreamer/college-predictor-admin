@@ -120,7 +120,10 @@ const EndUsers = () => {
       </div>
     ),
     filterIcon: (filtered) => (
-      <SearchOutlined className="text-xl bg-primary p-1 rounded-full" style={{ color: filtered ? "#ffffff" : "#ffffff" }} />
+      <SearchOutlined
+        className="text-xl bg-primary p-1 rounded-full"
+        style={{ color: filtered ? "#ffffff" : "#ffffff" }}
+      />
     ),
     onFilter: (value, record) =>
       record[dataIndex]
@@ -153,7 +156,7 @@ const EndUsers = () => {
       key: "name",
       title: "Name",
       render: (data) => data.name,
-      ...getColumnSearchProps('name'),
+      ...getColumnSearchProps("name"),
     },
     {
       key: "registeredOn",
@@ -171,19 +174,25 @@ const EndUsers = () => {
       key: "email",
       title: "Email",
       render: (data) => data.email,
-      ...getColumnSearchProps('email'),
+      ...getColumnSearchProps("email"),
+    },
+    {
+      key: "phoneNumber",
+      title: "Phone",
+      render: (data) => data.phoneNumber,
+      ...getColumnSearchProps("phoneNumber"),
     },
     {
       key: "city",
       title: "City",
       render: (data) => data.city,
-      ...getColumnSearchProps('city'),
+      ...getColumnSearchProps("city"),
     },
     {
       key: "state",
       title: "State",
       render: (data) => data.state,
-      ...getColumnSearchProps('state'),
+      ...getColumnSearchProps("state"),
     },
     {
       key: "tenthMarks",
@@ -204,7 +213,7 @@ const EndUsers = () => {
       key: "course",
       title: "Course Interested",
       render: (data) => data.course,
-      ...getColumnSearchProps('course'),
+      ...getColumnSearchProps("course"),
     },
     {
       key: "address",
@@ -217,10 +226,20 @@ const EndUsers = () => {
       render: (data) => data.dateOfBirth,
     },
     {
-      key: "phoneNumber",
-      title: "Phone",
-      render: (data) => data.phoneNumber,
-      ...getColumnSearchProps('phoneNumber'),
+      key: "referralCode",
+      title: "Referral Code",
+      render: (data) => (
+        <button
+          onClick={() => {
+            navigator.clipboard.writeText(
+              `https://www.admission.careerkick.in?ref_code=${data.referralCode}`
+            );
+          }}
+        >
+          {" "}
+          {data.referralCode}
+        </button>
+      ),
     },
     {
       key: "actions",

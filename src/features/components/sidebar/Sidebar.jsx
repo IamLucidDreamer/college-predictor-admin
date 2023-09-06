@@ -12,6 +12,7 @@ import {
   ApartmentOutlined,
   MailOutlined,
   BellOutlined,
+  LinkOutlined,
 } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import Logo from "../../../assets/images/careerkick_logo.png";
@@ -89,6 +90,15 @@ const menuOptions = [
     optionName: "Notifications",
     icon: <BellOutlined style={{ fontSize: "20px" }} />,
     route: "/admin/push-notifications",
+    isAdmin: true,
+    isCounselor: false,
+    isCollegeAdmin: false,
+  },
+  {
+    title: "Referral Links",
+    optionName: "Referral Links",
+    icon: <LinkOutlined style={{ fontSize: "20px" }} />,
+    route: "/admin/referral-link",
     isAdmin: true,
     isCounselor: false,
     isCollegeAdmin: false,
